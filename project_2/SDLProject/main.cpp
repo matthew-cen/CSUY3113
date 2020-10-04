@@ -145,22 +145,38 @@ void paddleBorderCollisionHandler(glm::vec3& player_pos, glm::vec3& player_movem
     }
 }
 
+// Additional flags as high framerate causes issues with collision bounding checks
+bool paddle_ball_collided_last_frame = false;
+bool paddle_top_bottom_collided_last_frame = false;
+
+
 void Update() {
     // COLLISION DETECTION 
 
 
     // Paddles Ball Collsion Check
     if (paddleBallCollided(player1_position) || paddleBallCollided(player2_position)) {
-        ball_movement.x *= -1.0f;
-        ball_movement.y *= -1.0f;
+        if (!paddle_ball_collided_last_frame) {
+            ball_movement.x *= -1.0f;
+            paddle_ball_collided_last_frame = true;
+        }
     }
-    // Top/Bottom Border Collsion Check
-    else if (ball_position.y < (-3.75f + half_ball_size) || ball_position.y >(3.75f - half_ball_size)) {
-        ball_movement.y *= -1.0f;
+    else {
+        paddle_ball_collided_last_frame = false;
     }
 
+    // Top/Bottom Border Collsion Check
+    if (ball_position.y < (-3.75f + half_ball_size) || ball_position.y >(3.75f - half_ball_size)) {
+        if (!paddle_top_bottom_collided_last_frame) {
+           ball_movement.y *= -1.0f;
+            paddle_top_bottom_collided_last_frame = true;
+        }
+    }
+    else {
+        paddle_top_bottom_collided_last_frame = false;
+    }
     // Left/Right Border Collsion Check
-    else if (ball_position.x < (-5.0f + half_ball_size) || ball_position.x >(5.0f - half_ball_size)) {
+    if (ball_position.x < (-5.0f + half_ball_size) || ball_position.x >(5.0f - half_ball_size)) {
         // gameIsRunning = false;
         game_ended = true;
     }
