@@ -1,0 +1,1 @@
+Use LEFT/RIGHT Arrow keys to move space ship to land on blue tiles.
