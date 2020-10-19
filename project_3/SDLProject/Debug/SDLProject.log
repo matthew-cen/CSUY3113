@@ -1,0 +1,7 @@
+﻿  Entity.cpp
+D:\Documents\Development\NYU\CSUY3113\project_3\SDLProject\Entity.cpp(26,23): warning C4018: '<': signed/unsigned mismatch
+D:\Documents\Development\NYU\CSUY3113\project_3\SDLProject\Entity.cpp(51,23): warning C4018: '<': signed/unsigned mismatch
+  main.cpp
+D:\Documents\Development\NYU\CSUY3113\project_3\SDLProject\main.cpp(259,23): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+  SDLProject.vcxproj -> D:\Documents\Development\NYU\CSUY3113\project_3\SDLProject\Debug\SDLProject.exe

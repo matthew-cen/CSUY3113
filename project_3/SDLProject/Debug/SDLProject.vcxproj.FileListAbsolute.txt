@@ -1,0 +1,2 @@
+D:\Documents\Development\NYU\CSUY3113\project_3\SDLProject\Debug\SDLProject.exe
+D:\Documents\Development\NYU\CSUY3113\project_3\SDLProject\Debug\SDLProject.pdb
