@@ -119,104 +119,9 @@ void Initialize()
     // Font
     fontTextureID = LoadTexture("assets/font1.png");
 
-    Entity *entity;
-
-    // Initialize Player
-
-    entity = new Entity(PLAYER);
-    state.player = entity;
-
-    state.entities.push_back(entity);
-    entity->position = glm::vec3(0.0f, 3.75f, 0.0f);
-    entity->acceleration = glm::vec3(0.0f, GRAVITY_ACCEL, 0.0f);
-    entity->textureID = LoadTexture("assets/SF01.png");
-    entity->animIndices = new int[1]{0};
-    entity->animFrames = 1;
-    entity->animIndex = 0;
-    entity->animTime = 0;
-    entity->animCols = 1;
-    entity->animRows = 1;
-    entity->size = PLAYER_SIZE;
-    entity->width = PLAYER_SIZE;
-    entity->height = PLAYER_SIZE;
-
-    GLuint moonTextureID = LoadTexture("assets/moon_tile.png");
-
-    // Initialize Map (Static Map Border Tiles)
-    entity = new Entity(PLATFORM);
-    state.entities.push_back(entity); // Left Border
-    entity->textureID = moonTextureID;
-    entity->tile_repeat_cols = 1;
-    entity->tile_repeat_rows = 10;
-    entity->size = TILE_SIZE;
-    entity->width = TILE_SIZE;
-    entity->height = TILE_SIZE * 10;
-    entity->position.x = -5.0f + TILE_SIZE / 2.0f;
-
-    entity = new Entity(PLATFORM);
-    state.entities.push_back(entity); // Right Border
-    entity->textureID = moonTextureID;
-    entity->tile_repeat_cols = 1;
-    entity->tile_repeat_rows = 10;
-    entity->size = TILE_SIZE;
-    entity->width = TILE_SIZE;
-    entity->height = TILE_SIZE * 10;
-    entity->position.x = 5.0f - TILE_SIZE / 2.0f;
-
-    entity = new Entity(PLATFORM);
-    state.entities.push_back(entity); // Bottom Border Left
-    entity->textureID = moonTextureID;
-    entity->tile_repeat_cols = 5;
-    entity->tile_repeat_rows = 1;
-    entity->size = TILE_SIZE;
-    entity->width = TILE_SIZE * 5;
-    entity->height = TILE_SIZE;
-    entity->position.x = -2.5f;
-    entity->position.y = -3.75f + TILE_SIZE / 2.0f;
-
-    entity = new Entity(PLATFORM);
-    state.entities.push_back(entity); // Bottom Border Right
-    entity->textureID = moonTextureID;
-    entity->tile_repeat_cols = 5;
-    entity->tile_repeat_rows = 1;
-    entity->size = TILE_SIZE;
-    entity->width = TILE_SIZE * 5;
-    entity->height = TILE_SIZE;
-    entity->position.x = 2.5f;
-    entity->position.y = -3.75f + TILE_SIZE / 2.0f;
-
-    entity = new Entity(TARGET);
-    state.entities.push_back(entity); // Landing Pad
-    entity->textureID = LoadTexture("assets/target_tile.png");
-    entity->tile_repeat_cols = 2;
-    entity->tile_repeat_rows = 1;
-    entity->size = TILE_SIZE;
-    entity->height = TILE_SIZE;
-    entity->width = TILE_SIZE * 2;
-
-    entity->position.y = -3.75f + TILE_SIZE / 2.0f;
-
-    entity = new Entity(PLATFORM);
-    state.entities.push_back(entity); // Obstacle 1
-    entity->textureID = moonTextureID;
-    entity->tile_repeat_cols = 4;
-    entity->tile_repeat_rows = 1;
-    entity->size = TILE_SIZE;
-    entity->height = TILE_SIZE;
-    entity->width = TILE_SIZE * 4;
-    entity->position.y = 1.5f;
-    entity->position.x = -1.75f;
-
-    entity = new Entity(PLATFORM);
-    state.entities.push_back(entity); // Obstacle 2
-    entity->textureID = moonTextureID;
-    entity->tile_repeat_cols = 3;
-    entity->tile_repeat_rows = 1;
-    entity->size = TILE_SIZE;
-    entity->height = TILE_SIZE;
-    entity->width = TILE_SIZE * 3;
-    entity->position.y = -1.5f;
-    entity->position.x = 2.0f;
+    // Load Map
+    GLuint mapTilesTextureID = LoadTexture("assets/Tileset.png"); // 6x8 Tile Set
+    state.map = new Map(LEVEL1_WIDTH, LEVEL1_HEIGHT, level1_data, 8,  6);
 }
 
 void ProcessInput()
@@ -375,15 +280,6 @@ void Render()
             entity->Render(&program);
         }
     }
-    if (state.gameMode == GAME_FAIL)
-    {
-        DrawText(&program, fontTextureID, "Mission Failed", 1, -0.5f, glm::vec3(-4.25f, 3, 0));
-    }
-    else if (state.gameMode == GAME_WIN)
-    {
-        DrawText(&program, fontTextureID, "Mission Success", 1, -0.5f, glm::vec3(-4.25f, 3, 0));
-    }
-
     SDL_GL_SwapWindow(displayWindow);
 }
 
