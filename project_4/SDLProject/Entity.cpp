@@ -9,18 +9,6 @@ Entity::Entity(enum EntityType entityType) : entityType(entityType)
     modelMatrix = glm::mat4(1.0f);
 }
 
-bool Entity::CheckCollision(Entity *other)
-{
-    float xdist = fabs(position.x - other->position.x) - ((width + other->width) / 2.0f);
-    float ydist = fabs(position.y - other->position.y) - ((height + other->height) / 2.0f);
-    if (xdist < 0 && ydist < 0)
-    {
-        lastCollision = other->entityType;
-        return true;
-    }
-    return false;
-}
-
 void Entity::CheckCollisionsY(Map *map)
 {
     // Probes for tiles
