@@ -26,7 +26,7 @@ void Entity::CheckCollisionsY(std::vector<Entity*>& objects)
     for (int i = 0; i < objects.size(); i++)
     {
         Entity *object = objects[i];
-        if (object->entityType == PLATFORM || object->entityType == TARGET) {
+        if (object->entityType == PLATFORM || object->entityType == ENEMY) {
 
             if (CheckCollision(object))
             {

@@ -121,7 +121,7 @@ void Initialize()
 
     // Load Map
     GLuint mapTilesTextureID = LoadTexture("assets/Tileset.png"); // 6x8 Tile Set
-    state.map = new Map(LEVEL1_WIDTH, LEVEL1_HEIGHT, level1_data, 8,  6);
+    state.map = new Map(LEVEL1_WIDTH, LEVEL1_HEIGHT, level1_data, mapTilesTextureID, 1.0f, 8,  6);
 }
 
 void ProcessInput()
