@@ -77,6 +77,31 @@ void Entity::CheckCollisionsX(Map *map)
 
 void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
 {
+
+    if (animIndices != NULL)
+    {
+        if (glm::length(acceleration) != 0)
+        {
+            // accumulate deltaTime
+            animTime += deltaTime;
+
+            // change animation frame if enough time accumulated
+            if (animTime >= 0.25f)
+            {
+                animTime = 0.0f;
+                animIndex++;
+                if (animIndex >= animIndices->size())
+                {
+                    animIndex = 0;
+                }
+            }
+        }
+        else
+        {
+            animIndex = 0;
+        }
+    }
+
     collidedTop = false;
     collidedBottom = false;
     collidedLeft = false;
@@ -136,7 +161,7 @@ void Entity::Render(ShaderProgram *program)
 
     if (animIndices != NULL)
     {
-        DrawSpriteFromTextureAtlas(program, textureID, animIndices[animIndex]);
+        DrawSpriteFromTextureAtlas(program, textureID, (*animIndices)[animIndex]);
         return;
     }
 }

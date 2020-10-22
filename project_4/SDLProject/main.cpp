@@ -20,8 +20,7 @@
 // Configuration
 #define GL_GLEXT_PROTOTYPES 1
 #define FIXED_TIMESTEP 0.016666f
-#define PLAYER_SPEED 1.0f
-
+#define PLAYER_SPEED 1.4f
 
 #define LEVEL1_WIDTH 14
 #define LEVEL1_HEIGHT 5
@@ -118,18 +117,18 @@ void Initialize()
 
     // Load Map
     GLuint mapTilesTextureID = LoadTexture("assets/Tileset.png"); // 6x8 Tile Set
-    state.map = new Map(LEVEL1_WIDTH, LEVEL1_HEIGHT, level1_data, mapTilesTextureID, 1.0f, 8,  6);
+    state.map = new Map(LEVEL1_WIDTH, LEVEL1_HEIGHT, level1_data, mapTilesTextureID, 1.0f, 8, 6);
 
     // Load Sprites
     GLuint playerTextureID = LoadTexture("assets/adventurer-Sheet.png"); // 6x8 Tile Set
     state.player = new Entity(PLAYER, playerTextureID);
-    state.player->animFrames = 1;
-    state.player->animIndices = new int[1] {0};
+    state.player->animIndices = state.player->animStationary;
+    state.player->animStationary = new std::vector<int>{0, 1, 2, 3};
+    state.player->animRight = new std::vector<int>{9, 10, 11, 12, 13, 14};
     state.player->animIndex = 0;
     state.player->animCols = 7;
     state.player->animRows = 11;
     state.player->acceleration.y = -9.81f;
-
 
     state.entities.push_back(state.player);
 }
@@ -175,6 +174,16 @@ void ProcessInput()
     else if (keys[SDL_SCANCODE_RIGHT])
     {
         state.player->velocity.x = 1.0f * PLAYER_SPEED;
+
+        if (state.player->animIndices != state.player->animRight)
+            state.player->animIndex = 0;
+        state.player->animIndices = state.player->animRight;
+    }
+    else
+    {
+        if (state.player->animIndices != state.player->animStationary)
+            state.player->animIndex = 0;
+        state.player->animIndices = state.player->animStationary;
     }
 }
 
@@ -253,7 +262,7 @@ void Update()
     }
     while (deltaTime >= FIXED_TIMESTEP)
     {
-        for (Entity* &entity_ptr : state.entities)
+        for (Entity *&entity_ptr : state.entities)
         {
             entity_ptr->Update(FIXED_TIMESTEP, state.entities, state.map);
         }
@@ -266,7 +275,7 @@ void Render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    for (Entity* &entity : state.entities)
+    for (Entity *&entity : state.entities)
     {
         entity->Render(&program);
     }

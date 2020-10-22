@@ -28,13 +28,13 @@ public:
     
     glm::mat4 modelMatrix = glm::mat4(1.0f);
     
-    int *animRight = NULL;
-    int *animLeft = NULL;
-    int *animUp = NULL;
-    int *animDown = NULL;
+    std::vector<int> *animRight = NULL;
+    std::vector<int> *animLeft = NULL;
+    std::vector<int> *animUp = NULL;
+    std::vector<int> *animDown = NULL;
+    std::vector<int> *animStationary = NULL;
 
-    int *animIndices = NULL;
-    int animFrames = 0;
+    std::vector<int> *animIndices = NULL;
     int animIndex = 0;
     float animTime = 0;
     int animCols = 0;
