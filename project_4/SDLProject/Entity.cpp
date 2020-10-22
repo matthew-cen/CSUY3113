@@ -140,46 +140,4 @@ void Entity::Render(ShaderProgram *program)
         DrawSpriteFromTextureAtlas(program, textureID, animIndices[animIndex]);
         return;
     }
-    else
-    {
-        float vertices[] = {
-            -0.5f * size * tile_repeat_cols,
-            -0.5f * size * tile_repeat_rows,
-            0.5f * size * tile_repeat_cols,
-            -0.5f * size * tile_repeat_rows,
-            0.5f * size * tile_repeat_cols,
-            0.5f * size * tile_repeat_rows,
-            -0.5f * size * tile_repeat_cols,
-            -0.5f * size * tile_repeat_rows,
-            0.5f * size * tile_repeat_cols,
-            0.5f * size * tile_repeat_rows,
-            -0.5f * size * tile_repeat_cols,
-            0.5f * size * tile_repeat_rows};
-        float texCoords[] = {
-            0.0f * tile_repeat_cols,
-            1.0f * tile_repeat_rows,
-            1.0f * tile_repeat_cols,
-            1.0f * tile_repeat_rows,
-            1.0f * tile_repeat_cols,
-            0.0f * tile_repeat_rows,
-            0.0f * tile_repeat_cols,
-            1.0f * tile_repeat_rows,
-            1.0f * tile_repeat_cols,
-            0.0f * tile_repeat_rows,
-            0.0f * tile_repeat_cols,
-            0.0f * tile_repeat_rows};
-
-        glBindTexture(GL_TEXTURE_2D, textureID);
-
-        glVertexAttribPointer(program->positionAttribute, 2, GL_FLOAT, false, 0, vertices);
-        glEnableVertexAttribArray(program->positionAttribute);
-
-        glVertexAttribPointer(program->texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords);
-        glEnableVertexAttribArray(program->texCoordAttribute);
-
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-
-        glDisableVertexAttribArray(program->positionAttribute);
-        glDisableVertexAttribArray(program->texCoordAttribute);
-    }
 }
