@@ -20,11 +20,8 @@
 // Configuration
 #define GL_GLEXT_PROTOTYPES 1
 #define FIXED_TIMESTEP 0.016666f
-#define GRAVITY_ACCEL -0.5f
 #define PLAYER_SPEED 1.0f
 
-#define PLAYER_SIZE 0.75f
-#define TILE_SIZE 0.75f
 
 #define LEVEL1_WIDTH 14
 #define LEVEL1_HEIGHT 5
