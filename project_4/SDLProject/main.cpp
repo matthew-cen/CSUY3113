@@ -169,16 +169,16 @@ void ProcessInput()
 
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
-    // state.player->acceleration.x = 0.0f;
+    state.player->velocity.x = 0.0f;
 
-    // if (keys[SDL_SCANCODE_LEFT])
-    // {
-    //     state.player->acceleration.x = -1.0f * PLAYER_SPEED;
-    // }
-    // else if (keys[SDL_SCANCODE_RIGHT])
-    // {
-    //     state.player->acceleration.x = 1.0f * PLAYER_SPEED;
-    // }
+    if (keys[SDL_SCANCODE_LEFT])
+    {
+        state.player->velocity.x = -1.0f * PLAYER_SPEED;
+    }
+    else if (keys[SDL_SCANCODE_RIGHT])
+    {
+        state.player->velocity.x = 1.0f * PLAYER_SPEED;
+    }
 }
 
 void DrawText(ShaderProgram *program, GLuint fontTextureID, std::string text,
