@@ -125,7 +125,14 @@ void Initialize()
 
     // Load Sprites
     GLuint playerTextureID = LoadTexture("assets/adventurer-Sheet.png"); // 6x8 Tile Set
+    state.player = new Entity(PLAYER, playerTextureID);
+    state.player->animFrames = 1;
+    state.player->animIndices = new int[1] {0};
+    state.player->animIndex = 0;
+    state.player->animCols = 7;
+    state.player->animRows = 11;
 
+    state.entities.push_back(state.player);
 }
 
 void ProcessInput()
@@ -247,27 +254,10 @@ void Update()
     }
     while (deltaTime >= FIXED_TIMESTEP)
     {
-        // for (Entity* &entity_ptr : state.entities)
-        // {
-        //     if (entity_ptr->needUpdate)
-        //     {
-        //         entity_ptr->Update(FIXED_TIMESTEP, state.entities);
-        //         if (entity_ptr->entityType == PLATFORM || entity_ptr->entityType == ENEMY)
-        //             entity_ptr->needUpdate = false;
-        //         else if (entity_ptr->entityType == PLAYER)
-        //         {
-        //             switch (entity_ptr->lastCollision)
-        //             {
-        //             case PLATFORM:
-        //                 state.gameMode = GAME_FAIL;
-        //                 break;
-        //             case ENEMY:
-        //                 state.gameMode = GAME_WIN;
-        //                 break;
-        //             }
-        //         }
-        //     }
-        // }
+        for (Entity* &entity_ptr : state.entities)
+        {
+            entity_ptr->Update(FIXED_TIMESTEP, state.entities, state.map);
+        }
         deltaTime -= FIXED_TIMESTEP;
     }
     accumulator = deltaTime;
