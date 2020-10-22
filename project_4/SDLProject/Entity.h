@@ -12,6 +12,7 @@
 #include "glm/mat4x4.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "ShaderProgram.h"
+#include "map.h"
 
 enum EntityType {PLAYER, PLATFORM, ENEMY};
 
@@ -50,12 +51,12 @@ public:
     
     Entity(enum EntityType entityType);
     
-    void Update(float deltaTime, std::vector<Entity*> &entities);
+    void Update(float deltaTime, std::vector<Entity*> &entities, int objectCount, Map *map);
     void Render(ShaderProgram *program);
     bool CheckCollision(Entity *object);
 
-    void CheckCollisionsX(std::vector<Entity*> &objects);
-    void CheckCollisionsY(std::vector<Entity*> &objects);
+    void CheckCollisionsX(Map *map);
+    void CheckCollisionsY(Map *map);
 
     void DrawSpriteFromTextureAtlas(ShaderProgram *program, GLuint textureID, int index);
 };
