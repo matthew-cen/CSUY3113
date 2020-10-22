@@ -156,16 +156,16 @@ void ProcessInput()
 
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
-    state.player->acceleration.x = 0.0f;
+    // state.player->acceleration.x = 0.0f;
 
-    if (keys[SDL_SCANCODE_LEFT])
-    {
-        state.player->acceleration.x = -1.0f * PLAYER_SPEED;
-    }
-    else if (keys[SDL_SCANCODE_RIGHT])
-    {
-        state.player->acceleration.x = 1.0f * PLAYER_SPEED;
-    }
+    // if (keys[SDL_SCANCODE_LEFT])
+    // {
+    //     state.player->acceleration.x = -1.0f * PLAYER_SPEED;
+    // }
+    // else if (keys[SDL_SCANCODE_RIGHT])
+    // {
+    //     state.player->acceleration.x = 1.0f * PLAYER_SPEED;
+    // }
 }
 
 void DrawText(ShaderProgram *program, GLuint fontTextureID, std::string text,
@@ -243,27 +243,27 @@ void Update()
     }
     while (deltaTime >= FIXED_TIMESTEP)
     {
-        for (auto &entity : state.entities)
-        {
-            if (entity->needUpdate)
-            {
-                entity->Update(FIXED_TIMESTEP, state.entities);
-                if (entity->entityType == PLATFORM || entity->entityType == ENEMY)
-                    entity->needUpdate = false;
-                else if (entity->entityType == PLAYER)
-                {
-                    switch (entity->lastCollision)
-                    {
-                    case PLATFORM:
-                        state.gameMode = GAME_FAIL;
-                        break;
-                    case ENEMY:
-                        state.gameMode = GAME_WIN;
-                        break;
-                    }
-                }
-            }
-        }
+        // for (Entity* &entity_ptr : state.entities)
+        // {
+        //     if (entity_ptr->needUpdate)
+        //     {
+        //         entity_ptr->Update(FIXED_TIMESTEP, state.entities);
+        //         if (entity_ptr->entityType == PLATFORM || entity_ptr->entityType == ENEMY)
+        //             entity_ptr->needUpdate = false;
+        //         else if (entity_ptr->entityType == PLAYER)
+        //         {
+        //             switch (entity_ptr->lastCollision)
+        //             {
+        //             case PLATFORM:
+        //                 state.gameMode = GAME_FAIL;
+        //                 break;
+        //             case ENEMY:
+        //                 state.gameMode = GAME_WIN;
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // }
         deltaTime -= FIXED_TIMESTEP;
     }
     accumulator = deltaTime;
@@ -280,6 +280,7 @@ void Render()
             entity->Render(&program);
         }
     }
+    state.map->Render(&program);
     SDL_GL_SwapWindow(displayWindow);
 }
 

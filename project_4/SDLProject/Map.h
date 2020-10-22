@@ -28,6 +28,7 @@ class Map
 
 public:
     Map(int width, int height, unsigned int *levelData, GLuint textureID, float tile_size, int texMapColNum, int texMapRowNum);
+    bool IsSolid(glm::vec3 position, float *penetration_x, float *penetration_y);
     void Build();
     void Render(ShaderProgram *program);
 };

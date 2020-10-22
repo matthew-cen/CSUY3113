@@ -12,11 +12,10 @@
 #include "glm/mat4x4.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "ShaderProgram.h"
-#include "map.h"
+#include "Map.h"
 
 enum EntityType {PLAYER, PLATFORM, ENEMY};
 
-// Either "sprite" or "tile" type. Tile supports texture wrapping but cannot use texture atlas or animation and cannot move
 class Entity {
 public:
     EntityType entityType;
@@ -47,11 +46,18 @@ public:
     float height = 1.0f;
     float width = 1.0f;
 
+    // Collision Markers
+    bool collidedTop;
+    bool collidedBottom;
+    bool collidedLeft;
+    bool collidedRight;
+
+
     EntityType lastCollision;
     
     Entity(enum EntityType entityType);
     
-    void Update(float deltaTime, std::vector<Entity*> &entities, int objectCount, Map *map);
+    void Update(float deltaTime, std::vector<Entity*> &entities, Map *map);
     void Render(ShaderProgram *program);
     bool CheckCollision(Entity *object);
 

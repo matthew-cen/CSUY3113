@@ -79,7 +79,7 @@ void Entity::CheckCollisionsX(Map *map)
     }
 }
 
-void Entity::Update(float deltaTime, Entity *objects, int objectCount, Map *map)
+void Entity::Update(float deltaTime, std::vector<Entity*> &entities, Map *map)
 {
     collidedTop = false;
     collidedBottom = false;
@@ -88,10 +88,10 @@ void Entity::Update(float deltaTime, Entity *objects, int objectCount, Map *map)
     velocity += acceleration * deltaTime;
     position.y += velocity.y * deltaTime; // Move on Y
     CheckCollisionsY(map);
-    CheckCollisionsY(objects, objectCount); // Fix if needed
+    // CheckCollisionsY(entities); // Fix if needed
     position.x += velocity.x * deltaTime;   // Move on X
     CheckCollisionsX(map);
-    CheckCollisionsX(objects, objectCount); // Fix if needed
+    // CheckCollisionsX(entities); // Fix if needed
 }
 
 void scaleCoords(float *floatArray, int array_size, float scale)
