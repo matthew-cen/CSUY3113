@@ -131,6 +131,8 @@ void Initialize()
     state.player->animIndex = 0;
     state.player->animCols = 7;
     state.player->animRows = 11;
+    state.player->acceleration.y = -9.81f;
+
 
     state.entities.push_back(state.player);
 }
@@ -267,12 +269,9 @@ void Render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    for (auto &entity : state.entities)
+    for (Entity* &entity : state.entities)
     {
-        if (entity->active)
-        {
-            entity->Render(&program);
-        }
+        entity->Render(&program);
     }
     state.map->Render(&program);
     SDL_GL_SwapWindow(displayWindow);

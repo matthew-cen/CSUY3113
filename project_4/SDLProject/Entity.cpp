@@ -88,6 +88,9 @@ void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
     position.x += velocity.x * deltaTime; // Move on X
     CheckCollisionsX(map);
     // CheckCollisionsX(entities); // Fix if needed
+
+    modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::translate(modelMatrix, position);
 }
 
 void scaleCoords(float *floatArray, int array_size, float scale)
