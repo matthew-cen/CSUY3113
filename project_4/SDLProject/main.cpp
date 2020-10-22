@@ -248,7 +248,7 @@ void Update()
             if (entity->needUpdate)
             {
                 entity->Update(FIXED_TIMESTEP, state.entities);
-                if (entity->entityType == PLATFORM || entity->entityType == TARGET)
+                if (entity->entityType == PLATFORM || entity->entityType == ENEMY)
                     entity->needUpdate = false;
                 else if (entity->entityType == PLAYER)
                 {
@@ -257,7 +257,7 @@ void Update()
                     case PLATFORM:
                         state.gameMode = GAME_FAIL;
                         break;
-                    case TARGET:
+                    case ENEMY:
                         state.gameMode = GAME_WIN;
                         break;
                     }

@@ -13,7 +13,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "ShaderProgram.h"
 
-enum EntityType {PLAYER, PLATFORM, TARGET};
+enum EntityType {PLAYER, PLATFORM, ENEMY};
 
 // Either "sprite" or "tile" type. Tile supports texture wrapping but cannot use texture atlas or animation and cannot move
 class Entity {
