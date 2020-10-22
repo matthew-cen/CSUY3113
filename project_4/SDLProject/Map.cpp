@@ -1,4 +1,5 @@
 #include "Map.h"
+
 Map::Map(int width, int height, unsigned int *levelData, GLuint textureID, float tile_size, int texMapColNum, int texMapRowNum)
 {
     this->width = width;
