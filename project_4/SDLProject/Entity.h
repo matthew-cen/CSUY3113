@@ -21,12 +21,12 @@ public:
     EntityType entityType;
     bool active = true;
     bool needUpdate = true;
-    glm::vec3 position;
-    glm::vec3 velocity;
-    glm::vec3 acceleration;
+    glm::vec3 position = glm::vec3(0);
+    glm::vec3 velocity = glm::vec3(0);
+    glm::vec3 acceleration = glm::vec3(0);
     GLuint textureID;
     
-    glm::mat4 modelMatrix;
+    glm::mat4 modelMatrix = glm::mat4(1.0f);
     
     int *animRight = NULL;
     int *animLeft = NULL;
@@ -40,8 +40,6 @@ public:
     int animCols = 0;
     int animRows = 0;
 
-    int tile_repeat_rows = NULL;
-    int tile_repeat_cols = NULL;
     float size = 1.0f;
     float height = 1.0f;
     float width = 1.0f;
@@ -55,7 +53,7 @@ public:
 
     EntityType lastCollision;
     
-    Entity(enum EntityType entityType);
+    Entity(enum EntityType entityType, GLuint textureID);
     
     void Update(float deltaTime, std::vector<Entity*> &entities, Map *map);
     void Render(ShaderProgram *program);

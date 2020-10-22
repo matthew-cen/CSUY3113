@@ -1,12 +1,8 @@
 #include "Entity.h"
 #include <vector>
 
-Entity::Entity(enum EntityType entityType) : entityType(entityType)
+Entity::Entity(enum EntityType entityType, GLuint textureID) : entityType(entityType), textureID(textureID)
 {
-    position = glm::vec3(0);
-    acceleration = glm::vec3(0);
-    velocity = glm::vec3(0);
-    modelMatrix = glm::mat4(1.0f);
 }
 
 void Entity::CheckCollisionsY(Map *map)
@@ -79,7 +75,7 @@ void Entity::CheckCollisionsX(Map *map)
     }
 }
 
-void Entity::Update(float deltaTime, std::vector<Entity*> &entities, Map *map)
+void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
 {
     collidedTop = false;
     collidedBottom = false;
@@ -89,7 +85,7 @@ void Entity::Update(float deltaTime, std::vector<Entity*> &entities, Map *map)
     position.y += velocity.y * deltaTime; // Move on Y
     CheckCollisionsY(map);
     // CheckCollisionsY(entities); // Fix if needed
-    position.x += velocity.x * deltaTime;   // Move on X
+    position.x += velocity.x * deltaTime; // Move on X
     CheckCollisionsX(map);
     // CheckCollisionsX(entities); // Fix if needed
 }
