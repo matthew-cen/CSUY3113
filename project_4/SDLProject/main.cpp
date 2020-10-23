@@ -11,11 +11,9 @@
 #include "ShaderProgram.h"
 #include "Entity.h"
 #include "Map.h"
+#include "Util.h"
 
 #include <vector>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
 // Configuration
 #define GL_GLEXT_PROTOTYPES 1
@@ -57,32 +55,6 @@ GLuint fontTextureID;
 ShaderProgram program;
 glm::mat4 viewMatrix, modelMatrix, projectionMatrix;
 
-GLuint LoadTexture(const char *filePath)
-{
-    int w, h, n;
-    unsigned char *image = stbi_load(filePath, &w, &h, &n, STBI_rgb_alpha);
-
-    if (image == NULL)
-    {
-        std::cout << "Unable to load image. Make sure the path is correct\n";
-        assert(false);
-    }
-
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    stbi_image_free(image);
-    return textureID;
-}
-
 void Initialize()
 {
     SDL_Init(SDL_INIT_VIDEO);
@@ -113,14 +85,14 @@ void Initialize()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Font
-    fontTextureID = LoadTexture("assets/font1.png");
+    fontTextureID = Util::LoadTexture("assets/font1.png");
 
     // Load Map
-    GLuint mapTilesTextureID = LoadTexture("assets/Tileset.png"); // 6x8 Tile Set
+    GLuint mapTilesTextureID = Util::LoadTexture("assets/Tileset.png"); // 6x8 Tile Set
     state.map = new Map(LEVEL1_WIDTH, LEVEL1_HEIGHT, level1_data, mapTilesTextureID, 1.0f, 8, 6);
 
     // Load Sprites
-    GLuint playerTextureID = LoadTexture("assets/adventurer-Sheet.png"); // 6x8 Tile Set
+    GLuint playerTextureID = Util::LoadTexture("assets/adventurer-Sheet.png"); // 6x8 Tile Set
     state.player = new Entity(PLAYER, playerTextureID);
     state.player->animIndices = state.player->animStationary;
     state.player->animStationary = new std::vector<int>{0, 1, 2, 3};
@@ -185,63 +157,6 @@ void ProcessInput()
             state.player->animIndex = 0;
         state.player->animIndices = state.player->animStationary;
     }
-}
-
-void DrawText(ShaderProgram *program, GLuint fontTextureID, std::string text,
-              float size, float spacing, glm::vec3 position)
-{
-    float width = 1.0f / 16.0f;
-    float height = 1.0f / 16.0f;
-    std::vector<float> vertices;
-    std::vector<float> texCoords;
-    for (int i = 0; i < text.size(); i++)
-    {
-        int index = (int)text[i];
-        float offset = (size + spacing) * i;
-        float u = (float)(index % 16) / 16.0f;
-        float v = (float)(index / 16) / 16.0f;
-
-        vertices.insert(vertices.end(), {
-                                            offset + (-0.5f * size),
-                                            0.5f * size,
-                                            offset + (-0.5f * size),
-                                            -0.5f * size,
-                                            offset + (0.5f * size),
-                                            0.5f * size,
-                                            offset + (0.5f * size),
-                                            -0.5f * size,
-                                            offset + (0.5f * size),
-                                            0.5f * size,
-                                            offset + (-0.5f * size),
-                                            -0.5f * size,
-                                        });
-        texCoords.insert(texCoords.end(), {
-                                              u,
-                                              v,
-                                              u,
-                                              v + height,
-                                              u + width,
-                                              v,
-                                              u + width,
-                                              v + height,
-                                              u + width,
-                                              v,
-                                              u,
-                                              v + height,
-                                          });
-    } // end of for loop
-    glm::mat4 modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::translate(modelMatrix, position);
-    program->SetModelMatrix(modelMatrix);
-    glUseProgram(program->programID);
-    glVertexAttribPointer(program->positionAttribute, 2, GL_FLOAT, false, 0, vertices.data());
-    glEnableVertexAttribArray(program->positionAttribute);
-    glVertexAttribPointer(program->texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords.data());
-    glEnableVertexAttribArray(program->texCoordAttribute);
-    glBindTexture(GL_TEXTURE_2D, fontTextureID);
-    glDrawArrays(GL_TRIANGLES, 0, (int)(text.size() * 6));
-    glDisableVertexAttribArray(program->positionAttribute);
-    glDisableVertexAttribArray(program->texCoordAttribute);
 }
 
 float lastTicks = 0.0f;
