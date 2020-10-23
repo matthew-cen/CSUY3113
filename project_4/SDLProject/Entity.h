@@ -21,6 +21,8 @@ public:
     EntityType entityType;
     bool active = true;
     bool needUpdate = true;
+    bool jump = false;
+    float jumpPower = 5.0f;
     glm::vec3 position = glm::vec3(0);
     glm::vec3 velocity = glm::vec3(0);
     glm::vec3 acceleration = glm::vec3(0);

@@ -18,7 +18,7 @@
 // Configuration
 #define GL_GLEXT_PROTOTYPES 1
 #define FIXED_TIMESTEP 0.016666f
-#define PLAYER_SPEED 1.4f
+#define PLAYER_SPEED 2.0f
 
 #define LEVEL1_WIDTH 14
 #define LEVEL1_HEIGHT 5
@@ -45,8 +45,8 @@ unsigned int level1_data[] =
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 0, 0, 1, 1, 1, 5, 5, 5, 5, 5,
-        5, 5, 5, 5, 0, 0, 5, 5, 5, 5, 5, 5, 5, 5};
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 5, 5, 5,
+        5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5};
 
 SDL_Window *displayWindow;
 bool gameIsRunning = true;
@@ -128,7 +128,10 @@ void ProcessInput()
                 break;
 
             case SDLK_SPACE:
-                // Some sort of action
+                if (state.player->collidedBottom)
+                {
+                    state.player->jump = true;
+                }
                 break;
             }
             break; // SDL_KEYDOWN
@@ -184,12 +187,16 @@ void Update()
         deltaTime -= FIXED_TIMESTEP;
     }
     accumulator = deltaTime;
+
+    // side scrolling
+    viewMatrix = glm::mat4(1.0f);
+    viewMatrix = glm::translate(viewMatrix, glm::vec3(-state.player->position.x, 0, 0));
 }
 
 void Render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
-
+    program.SetViewMatrix(viewMatrix);
     for (Entity *&entity : state.entities)
     {
         entity->Render(&program);

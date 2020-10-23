@@ -102,6 +102,12 @@ void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
         }
     }
 
+    if (jump)
+    {
+        jump = false;
+        velocity.y += jumpPower;
+    }
+
     collidedTop = false;
     collidedBottom = false;
     collidedLeft = false;
