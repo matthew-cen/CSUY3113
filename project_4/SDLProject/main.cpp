@@ -21,7 +21,7 @@
 #define PLAYER_SPEED 2.0f
 
 #define LEVEL1_WIDTH 14
-#define LEVEL1_HEIGHT 5
+#define LEVEL1_HEIGHT 8
 
 enum GameMode
 {
@@ -42,10 +42,13 @@ GameState state;
 
 unsigned int level1_data[] =
     {
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 5, 5, 5,
+        5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        5, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+        5, 1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 5, 5, 5,
         5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5};
 
 SDL_Window *displayWindow;
@@ -101,6 +104,8 @@ void Initialize()
     state.player->animCols = 7;
     state.player->animRows = 11;
     state.player->acceleration.y = -9.81f;
+    state.player->position.x = 1.0f;
+    state.player->position.y = -1.0f;
 
     state.entities.push_back(state.player);
 }
@@ -190,7 +195,16 @@ void Update()
 
     // side scrolling
     viewMatrix = glm::mat4(1.0f);
-    viewMatrix = glm::translate(viewMatrix, glm::vec3(-state.player->position.x, 0, 0));
+
+    if (state.player->position.x > 5)
+    {
+        viewMatrix = glm::translate(viewMatrix,
+                                    glm::vec3(-state.player->position.x, 3.75, 0));
+    }
+    else
+    {
+        viewMatrix = glm::translate(viewMatrix, glm::vec3(-5, 3.75, 0));
+    }
 }
 
 void Render()
