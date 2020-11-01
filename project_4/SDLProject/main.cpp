@@ -132,12 +132,13 @@ void ProcessInput()
 
             case SDLK_RIGHT:
                 break;
-
-            case SDLK_SPACE:
+            case SDLK_UP:
                 if (state.player->collidedBottom)
                 {
                     state.player->jump = true;
                 }
+                break;
+            case SDLK_SPACE:
                 break;
             }
             break; // SDL_KEYDOWN
