@@ -96,7 +96,6 @@ void Initialize()
     // Load Sprites
     GLuint playerTextureID = Util::LoadTexture("assets/adventurer.png"); // 6x8 Tile Set
     state.player = new Entity(PLAYER, playerTextureID);
-    state.player->animIndices = state.player->animIdleLeft;
     state.player->animIdleLeft = new std::vector<int>{18, 19, 20};
     state.player->animIdleRight = new std::vector<int>{0, 1, 2};
     state.player->animMoveLeft = new std::vector<int>{25, 26, 27, 28, 29, 30};
@@ -114,6 +113,27 @@ void Initialize()
     state.player->SetState(IDLE);
 
     state.entities.push_back(state.player);
+
+    GLuint houndTextureID = Util::LoadTexture("assets/enemies/hell-hound-idle-1-USE.png"); // 6x8 Tile Set
+    Entity *enemy = new Entity(ENEMY, houndTextureID);
+    enemy->animIdleLeft = new std::vector<int>{0};
+    enemy->animIdleRight = new std::vector<int>{0};
+    enemy->animMoveLeft = new std::vector<int>{0};
+    enemy->animMoveRight = new std::vector<int>{0};
+    enemy->animAttackLeft = new std::vector<int>{0};
+    enemy->animAttackRight = new std::vector<int>{0};
+    enemy->animIndices = enemy->animIdleRight;
+    enemy->animIndex = 0;
+    enemy->animCols = 1;
+    enemy->animRows = 1;
+    enemy->acceleration.y = -9.81f;
+    enemy->position.x = 1.0f;
+    enemy->position.y = -1.0f;
+    enemy->direction = RIGHT;
+    enemy->SetState(IDLE);
+
+    state.entities.push_back(enemy);
+
 }
 
 void ProcessInput()
