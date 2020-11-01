@@ -100,6 +100,7 @@ void Initialize()
     state.player->animIndices = state.player->animStationary;
     state.player->animStationary = new std::vector<int>{0, 1, 2};
     state.player->animRight = new std::vector<int>{7, 8, 9,10, 11, 12};
+    state.player->animLeft = new std::vector<int>{25, 26, 27,28, 29, 30 };
     state.player->animIndex = 0;
     state.player->animCols = 18;
     state.player->animRows = 2;
@@ -150,6 +151,10 @@ void ProcessInput()
     if (keys[SDL_SCANCODE_LEFT])
     {
         state.player->velocity.x = -1.0f * PLAYER_SPEED;
+
+        if (state.player->animIndices != state.player->animLeft)
+            state.player->animIndex = 0;
+            state.player->animIndices = state.player->animLeft;
     }
     else if (keys[SDL_SCANCODE_RIGHT])
     {
@@ -157,13 +162,13 @@ void ProcessInput()
 
         if (state.player->animIndices != state.player->animRight)
             state.player->animIndex = 0;
-        state.player->animIndices = state.player->animRight;
+            state.player->animIndices = state.player->animRight;
     }
     else
     {
         if (state.player->animIndices != state.player->animStationary)
             state.player->animIndex = 0;
-        state.player->animIndices = state.player->animStationary;
+            state.player->animIndices = state.player->animStationary;
     }
 }
 
