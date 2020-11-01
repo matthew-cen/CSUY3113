@@ -177,6 +177,7 @@ void ProcessInput()
         return;
     // Disable controls if player is in air
     // if (state.player->state == JUMP && !(state.player->collidedBottom)) return;
+    if (!(state.player->collidedBottom)) return;
     
     if (keys[SDL_SCANCODE_LEFT])
     {

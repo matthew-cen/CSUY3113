@@ -179,7 +179,6 @@ void Entity::SetState(enum EntityState newState)
     if (state == newState)
         return;
 
-    if (!collidedBottom) return;
     switch (newState)
     {
     case IDLE:
