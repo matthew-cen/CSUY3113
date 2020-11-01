@@ -18,7 +18,6 @@
 // Configuration
 #define GL_GLEXT_PROTOTYPES 1
 #define FIXED_TIMESTEP 0.016666f
-#define PLAYER_SPEED 2.0f
 
 #define LEVEL1_WIDTH 14
 #define LEVEL1_HEIGHT 8
@@ -42,14 +41,14 @@ GameState state;
 
 unsigned int level1_data[] =
     {
-         5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,  5,
-         5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,  5,
-         5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,  5,
-         5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,  0,  1,  5,
-         5, 15, 15, 15, 15, 15, 15, 15,  0,  1,  1,  5,  5,  5,
-         5, 15, 15, 15, 15,  0,  1,  1,  5,  5,  5,  5,  5,  5,
-         5,  1,  1,  1,  1,  5,  5,  5,  5,  5,  5,  5,  5,  5,
-         5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5, 5};
+        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 5,
+        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 5,
+        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 5,
+        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 0, 1, 5,
+        5, 15, 15, 15, 15, 15, 15, 15, 0, 1, 1, 5, 5, 5,
+        5, 15, 15, 15, 15, 0, 1, 1, 5, 5, 5, 5, 5, 5,
+        5, 1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+        5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5};
 
 SDL_Window *displayWindow;
 bool gameIsRunning = true;
@@ -97,16 +96,22 @@ void Initialize()
     // Load Sprites
     GLuint playerTextureID = Util::LoadTexture("assets/adventurer.png"); // 6x8 Tile Set
     state.player = new Entity(PLAYER, playerTextureID);
-    state.player->animIndices = state.player->animStationary;
-    state.player->animStationary = new std::vector<int>{0, 1, 2};
-    state.player->animRight = new std::vector<int>{7, 8, 9,10, 11, 12};
-    state.player->animLeft = new std::vector<int>{25, 26, 27,28, 29, 30 };
+    state.player->animIndices = state.player->animIdleLeft;
+    state.player->animIdleLeft = new std::vector<int>{18, 19, 20};
+    state.player->animIdleRight = new std::vector<int>{0, 1, 2};
+    state.player->animMoveLeft = new std::vector<int>{25, 26, 27, 28, 29, 30};
+    state.player->animMoveRight = new std::vector<int>{7, 8, 9, 10, 11, 12};
+    state.player->animAttackLeft = new std::vector<int>{31, 32, 33, 34, 35};
+    state.player->animAttackRight = new std::vector<int>{13, 14, 15, 16, 17};
+
     state.player->animIndex = 0;
     state.player->animCols = 18;
     state.player->animRows = 2;
     state.player->acceleration.y = -9.81f;
     state.player->position.x = 1.0f;
     state.player->position.y = -1.0f;
+    state.player->direction = RIGHT;
+    state.player->SetState(IDLE);
 
     state.entities.push_back(state.player);
 }
@@ -133,12 +138,12 @@ void ProcessInput()
             case SDLK_RIGHT:
                 break;
             case SDLK_UP:
-                if (state.player->collidedBottom)
-                {
-                    state.player->jump = true;
-                }
+                if (state.player->collidedBottom && state.player->state != ATTACK)
+                    state.player->SetState(JUMP);
                 break;
             case SDLK_SPACE:
+                if (state.player->collidedBottom)
+                    state.player->SetState(ATTACK);
                 break;
             }
             break; // SDL_KEYDOWN
@@ -147,29 +152,25 @@ void ProcessInput()
 
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
-    state.player->velocity.x = 0.0f;
-
+    // Disable other controls during attack
+    if (state.player->state == ATTACK)
+        return;
+    // Disable controls if player is in air
+    // if (state.player->state == JUMP && !(state.player->collidedBottom)) return;
+    
     if (keys[SDL_SCANCODE_LEFT])
     {
-        state.player->velocity.x = -1.0f * PLAYER_SPEED;
-
-        if (state.player->animIndices != state.player->animLeft)
-            state.player->animIndex = 0;
-            state.player->animIndices = state.player->animLeft;
+        state.player->direction = LEFT;
+        state.player->SetState(RUN);
     }
     else if (keys[SDL_SCANCODE_RIGHT])
     {
-        state.player->velocity.x = 1.0f * PLAYER_SPEED;
-
-        if (state.player->animIndices != state.player->animRight)
-            state.player->animIndex = 0;
-            state.player->animIndices = state.player->animRight;
+        state.player->direction = RIGHT;
+        state.player->SetState(RUN);
     }
     else
     {
-        if (state.player->animIndices != state.player->animStationary)
-            state.player->animIndex = 0;
-            state.player->animIndices = state.player->animStationary;
+        state.player->SetState(IDLE);
     }
 }
 

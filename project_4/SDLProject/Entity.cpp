@@ -93,6 +93,7 @@ void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
                 if (animIndex >= animIndices->size())
                 {
                     animIndex = 0;
+                    if (state == ATTACK) SetState(IDLE);
                 }
             }
         }
@@ -105,6 +106,7 @@ void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
     if (jump)
     {
         jump = false;
+        // SetState(RUN);
         velocity.y += jumpPower;
     }
 
@@ -170,4 +172,49 @@ void Entity::Render(ShaderProgram *program)
         DrawSpriteFromTextureAtlas(program, textureID, (*animIndices)[animIndex]);
         return;
     }
+}
+
+void Entity::SetState(enum EntityState newState)
+{
+    if (state == newState)
+        return;
+
+    if (!collidedBottom) return;
+    switch (newState)
+    {
+    case IDLE:
+        velocity.x = 0.0f;
+        animIndex = 0;
+        if (direction == LEFT)
+            animIndices = animIdleLeft;
+        else if (direction == RIGHT)
+            animIndices = animIdleRight;
+        break;
+    case RUN:
+        velocity.x = 1.0f * moveSpeed;
+        if (direction == LEFT)
+        {
+            velocity.x *= -1.0f;
+            animIndices = animMoveLeft;
+        }
+        else if (direction == RIGHT)
+            animIndices = animMoveRight;
+
+        animIndex = 0;
+
+        break;
+    case JUMP:
+        jump = true;
+        break;
+    case ATTACK:
+        velocity.x = 0.0f;
+        if (direction == LEFT)
+            animIndices = animAttackLeft;
+        else if (direction == RIGHT)
+            animIndices = animAttackRight;
+        animIndex = 0;
+    default:
+        break;
+    }
+    state = newState;
 }

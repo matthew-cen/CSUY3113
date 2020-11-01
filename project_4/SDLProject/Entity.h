@@ -15,13 +15,20 @@
 #include "Map.h"
 
 enum EntityType {PLAYER, PLATFORM, ENEMY};
+enum EntityState {RUN, JUMP, IDLE, ATTACK};
+enum EntityDirection {LEFT, RIGHT};
+
 
 class Entity {
 public:
     EntityType entityType;
+    EntityState state;
+    EntityDirection direction;
+
     bool active = true;
     bool needUpdate = true;
     bool jump = false;
+
     float jumpPower = 5.0f;
     glm::vec3 position = glm::vec3(0);
     glm::vec3 velocity = glm::vec3(0);
@@ -30,14 +37,19 @@ public:
     
     glm::mat4 modelMatrix = glm::mat4(1.0f);
     
-    std::vector<int> *animRight = NULL;
-    std::vector<int> *animLeft = NULL;
-    std::vector<int> *animUp = NULL;
-    std::vector<int> *animDown = NULL;
-    std::vector<int> *animStationary = NULL;
+    std::vector<int> *animMoveRight = NULL;
+    std::vector<int> *animMoveLeft = NULL;
+    std::vector<int> *animMoveUp = NULL;
+    std::vector<int> *animMoveDown = NULL;
+    std::vector<int> *animIdleLeft = NULL;
+    std::vector<int> *animIdleRight = NULL;
+    std::vector<int> *animAttackLeft = NULL;
+    std::vector<int> *animAttackRight= NULL;
 
     std::vector<int> *animIndices = NULL;
-    int animIndex = 0;
+
+    float moveSpeed = 2.0f;
+    unsigned int animIndex = 0;
     float animTime = 0;
     int animCols = 0;
     int animRows = 0;
@@ -63,6 +75,6 @@ public:
 
     void CheckCollisionsX(Map *map);
     void CheckCollisionsY(Map *map);
-
+    void SetState(enum EntityState newState);
     void DrawSpriteFromTextureAtlas(ShaderProgram *program, GLuint textureID, int index);
 };
