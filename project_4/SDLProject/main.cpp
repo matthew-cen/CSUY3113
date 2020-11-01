@@ -95,14 +95,14 @@ void Initialize()
     state.map = new Map(LEVEL1_WIDTH, LEVEL1_HEIGHT, level1_data, mapTilesTextureID, 1.0f, 8, 6);
 
     // Load Sprites
-    GLuint playerTextureID = Util::LoadTexture("assets/adventurer-Sheet.png"); // 6x8 Tile Set
+    GLuint playerTextureID = Util::LoadTexture("assets/adventurer.png"); // 6x8 Tile Set
     state.player = new Entity(PLAYER, playerTextureID);
     state.player->animIndices = state.player->animStationary;
-    state.player->animStationary = new std::vector<int>{0, 1, 2, 3};
-    state.player->animRight = new std::vector<int>{9, 10, 11, 12, 13, 14};
+    state.player->animStationary = new std::vector<int>{0, 1, 2};
+    state.player->animRight = new std::vector<int>{7, 8, 9,10, 11, 12};
     state.player->animIndex = 0;
-    state.player->animCols = 7;
-    state.player->animRows = 11;
+    state.player->animCols = 18;
+    state.player->animRows = 2;
     state.player->acceleration.y = -9.81f;
     state.player->position.x = 1.0f;
     state.player->position.y = -1.0f;
