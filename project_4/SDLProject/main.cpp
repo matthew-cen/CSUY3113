@@ -132,7 +132,44 @@ void Initialize()
     enemy->direction = RIGHT;
     enemy->aiState = JUMPING;
     enemy->SetState(IDLE);
+    state.entities.push_back(enemy);
 
+    enemy = new Entity(ENEMY, houndTextureID);
+    enemy->animIdleLeft = new std::vector<int>{0};
+    enemy->animIdleRight = new std::vector<int>{0};
+    enemy->animMoveLeft = new std::vector<int>{0};
+    enemy->animMoveRight = new std::vector<int>{0};
+    enemy->animAttackLeft = new std::vector<int>{0};
+    enemy->animAttackRight = new std::vector<int>{0};
+    enemy->animIndices = enemy->animIdleRight;
+    enemy->animIndex = 0;
+    enemy->animCols = 1;
+    enemy->animRows = 1;
+    enemy->acceleration.y = -9.81f;
+    enemy->position.x = 8.5f;
+    enemy->position.y = 0.5f;
+    enemy->direction = RIGHT;
+    enemy->aiState = JUMPING;
+    enemy->SetState(IDLE);
+    state.entities.push_back(enemy);
+
+    enemy = new Entity(ENEMY, houndTextureID);
+    enemy->animIdleLeft = new std::vector<int>{0};
+    enemy->animIdleRight = new std::vector<int>{0};
+    enemy->animMoveLeft = new std::vector<int>{0};
+    enemy->animMoveRight = new std::vector<int>{0};
+    enemy->animAttackLeft = new std::vector<int>{0};
+    enemy->animAttackRight = new std::vector<int>{0};
+    enemy->animIndices = enemy->animIdleRight;
+    enemy->animIndex = 0;
+    enemy->animCols = 1;
+    enemy->animRows = 1;
+    enemy->acceleration.y = -9.81f;
+    enemy->position.x = 11.5f;
+    enemy->position.y = 1.5f;
+    enemy->direction = RIGHT;
+    enemy->aiState = JUMPING;
+    enemy->SetState(IDLE);
     state.entities.push_back(enemy);
 }
 
