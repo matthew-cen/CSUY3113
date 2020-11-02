@@ -80,8 +80,15 @@ bool Entity::CheckCollision(std::vector<Entity*> &entities)
     for (Entity *&entity_ptr : entities)
     {
         if (entity_ptr->entityType == ENEMY) {
-            if (glm::distance(position, entity_ptr->position) < 0.7f) 
-            alive = false;
+            float dist = glm::distance(position, entity_ptr->position);
+            // Enemy attack range shorter than player's
+            if (dist < 0.9f && state == ATTACK && animIndex > 2) {
+                entity_ptr->alive = false;
+            }  
+
+            if (dist < 0.6f && entity_ptr->state == ATTACK) {
+                alive = false;
+            }  
             // Player Attacks
             // if (state == ATTACK) {}
 

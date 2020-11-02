@@ -44,11 +44,11 @@ unsigned int level1_data[] =
         5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 5,
         5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 5,
         5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 5,
-        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,  0,  1,  1,  1, 5, 
-        5, 15, 15, 15, 15, 15, 15, 15,  0,  1,  1,  5,  5,  5,  5, 5, 
-        5, 15, 15, 15, 15,  0,  1,  1,  5,  5,  5,  5,  5,  5,  5, 5,
-        5,  1,  1,  1,  1,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5, 5,
-        5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5, 5};
+        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 0, 1, 1, 1, 5,
+        5, 15, 15, 15, 15, 15, 15, 15, 0, 1, 1, 5, 5, 5, 5, 5,
+        5, 15, 15, 15, 15, 0, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5,
+        5, 1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+        5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5};
 
 SDL_Window *displayWindow;
 bool gameIsRunning = true;
@@ -186,7 +186,7 @@ void ProcessInput()
         state.player->direction = RIGHT;
         state.player->SetState(RUN);
     }
-    else 
+    else
     {
         state.player->SetState(IDLE);
     }
@@ -212,7 +212,8 @@ void Update()
     {
         for (Entity *&entity_ptr : state.entities)
         {
-            entity_ptr->Update(FIXED_TIMESTEP, state.entities, state.map);
+            if (entity_ptr->alive)
+                entity_ptr->Update(FIXED_TIMESTEP, state.entities, state.map);
         }
         deltaTime -= FIXED_TIMESTEP;
     }
@@ -232,7 +233,8 @@ void Update()
     }
 
     // End game when player dies
-    if (!(state.player->alive)) {
+    if (!(state.player->alive))
+    {
         state.gameMode = GAME_LOSE;
     }
 }
@@ -243,15 +245,16 @@ void Render()
     program.SetViewMatrix(viewMatrix);
     for (Entity *&entity : state.entities)
     {
-        entity->Render(&program);
+        if (entity->alive)
+            entity->Render(&program);
     }
     state.map->Render(&program);
 
-    if (state.gameMode == GAME_LOSE) 
-    Util::DrawText(&program, fontTextureID, "You Lose", 1.2f,0.05f, glm::vec3(1.0f,-0.8f,0.0f));
+    if (state.gameMode == GAME_LOSE)
+        Util::DrawText(&program, fontTextureID, "You Lose", 1.2f, 0.05f, glm::vec3(1.0f, -0.8f, 0.0f));
 
     else if (state.gameMode == GAME_WIN)
-    Util::DrawText(&program, fontTextureID, "You Win", 1.2f, 0.05f, glm::vec3(1.0f,-0.8f,0.0f));
+        Util::DrawText(&program, fontTextureID, "You Win", 1.2f, 0.05f, glm::vec3(1.0f, -0.8f, 0.0f));
 
     SDL_GL_SwapWindow(displayWindow);
 }
