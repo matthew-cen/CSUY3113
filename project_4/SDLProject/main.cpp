@@ -25,7 +25,7 @@
 enum GameMode
 {
     GAME_PLAY,
-    GAME_FAIL,
+    GAME_LOSE,
     GAME_WIN
 };
 
@@ -230,6 +230,11 @@ void Update()
     {
         viewMatrix = glm::translate(viewMatrix, glm::vec3(-5, 3.75, 0));
     }
+
+    // End game when player dies
+    if (!(state.player->alive)) {
+        state.gameMode = GAME_LOSE;
+    }
 }
 
 void Render()
@@ -241,6 +246,13 @@ void Render()
         entity->Render(&program);
     }
     state.map->Render(&program);
+
+    if (state.gameMode == GAME_LOSE) 
+    Util::DrawText(&program, fontTextureID, "You Lose", 1.2f,0.05f, glm::vec3(1.0f,-0.8f,0.0f));
+
+    else if (state.gameMode == GAME_WIN)
+    Util::DrawText(&program, fontTextureID, "You Win", 1.2f, 0.05f, glm::vec3(1.0f,-0.8f,0.0f));
+
     SDL_GL_SwapWindow(displayWindow);
 }
 

@@ -28,7 +28,7 @@ public:
     EntityDirection direction;
     AIState aiState;
     bool active = true;
-    bool needUpdate = true;
+    bool alive = true;
     bool jump = false;
 
     float jumpPower = 5.0f;
@@ -73,7 +73,7 @@ public:
     
     void Update(float deltaTime, std::vector<Entity*> &entities, Map *map);
     void Render(ShaderProgram *program);
-    bool CheckCollision(Entity *object);
+    bool CheckCollision(std::vector<Entity*> &entities);
 
     void CheckCollisionsX(Map *map);
     void CheckCollisionsY(Map *map);

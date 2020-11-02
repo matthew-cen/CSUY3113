@@ -75,11 +75,31 @@ void Entity::CheckCollisionsX(Map *map)
     }
 }
 
+bool Entity::CheckCollision(std::vector<Entity*> &entities)
+{
+    for (Entity *&entity_ptr : entities)
+    {
+        if (entity_ptr->entityType == ENEMY) {
+            if (glm::distance(position, entity_ptr->position) < 0.7f) 
+            alive = false;
+            // Player Attacks
+            // if (state == ATTACK) {}
+
+            // Enemy Attacks player
+            // if (entity_ptr->state == ATTACK) {
+
+            // }
+        }
+    }
+    return true;
+}
+
 void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
 {
 
-    if (entityType == ENEMY) AI();
-    
+    if (entityType == ENEMY)
+        AI();
+
     if (animIndices != NULL)
     {
         if (glm::length(acceleration) != 0)
@@ -95,7 +115,8 @@ void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
                 if (animIndex >= animIndices->size())
                 {
                     animIndex = 0;
-                    if (state == ATTACK) SetState(IDLE);
+                    if (state == ATTACK)
+                        SetState(IDLE);
                 }
             }
         }
@@ -124,7 +145,10 @@ void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
     CheckCollisionsX(map);
     // CheckCollisionsX(entities); // Fix if needed
 
-    if (collidedBottom && state == JUMPING) SetState(IDLE);
+    if (collidedBottom && state == JUMPING)
+        SetState(IDLE);
+
+    if (entityType == PLAYER) CheckCollision(entities);
 
     modelMatrix = glm::mat4(1.0f);
     modelMatrix = glm::translate(modelMatrix, position);
@@ -232,7 +256,8 @@ void Entity::AI()
     case ATTACKING:
         break;
     case JUMPING:
-        if (collidedBottom) SetState(JUMP);
+        if (collidedBottom)
+            SetState(JUMP);
         break;
     default:
         break;
