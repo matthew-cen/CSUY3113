@@ -15,16 +15,20 @@
 #include "Map.h"
 
 enum EntityType {PLAYER, PLATFORM, ENEMY};
-enum EntityState {RUN, JUMP, IDLE, ATTACK};
+enum EntityMoveState {RUN, JUMP, IDLE, ATTACK};
 enum EntityDirection {LEFT, RIGHT};
 enum AIState {PATROLLING, JUMPING, ATTACKING};
-
+enum AIType {
+    PATROLLER, // patrols platforn, aggressive
+    JUMPER, // jumps in place, passive 
+    COWARD // runs from player, passive
+    };
 
 
 class Entity {
 public:
     EntityType entityType;
-    EntityState state;
+    EntityMoveState moveState;
     EntityDirection direction;
     AIState aiState;
     bool active = true;
@@ -77,7 +81,7 @@ public:
 
     void CheckCollisionsX(Map *map);
     void CheckCollisionsY(Map *map);
-    void SetState(enum EntityState newState);
+    void SetMoveState(enum EntityMoveState newState);
     void DrawSpriteFromTextureAtlas(ShaderProgram *program, GLuint textureID, int index);
 
     void AI();

@@ -110,7 +110,7 @@ void Initialize()
     state.player->position.x = 1.0f;
     state.player->position.y = -1.0f;
     state.player->direction = RIGHT;
-    state.player->SetState(IDLE);
+    state.player->SetMoveState(IDLE);
 
     state.entities.push_back(state.player);
 
@@ -131,7 +131,7 @@ void Initialize()
     enemy->position.y = -0.5f;
     enemy->direction = RIGHT;
     enemy->aiState = JUMPING;
-    enemy->SetState(IDLE);
+    enemy->SetMoveState(IDLE);
     state.entities.push_back(enemy);
 
     enemy = new Entity(ENEMY, houndTextureID);
@@ -150,7 +150,7 @@ void Initialize()
     enemy->position.y = 0.5f;
     enemy->direction = RIGHT;
     enemy->aiState = JUMPING;
-    enemy->SetState(IDLE);
+    enemy->SetMoveState(IDLE);
     state.entities.push_back(enemy);
 
     enemy = new Entity(ENEMY, houndTextureID);
@@ -169,7 +169,7 @@ void Initialize()
     enemy->position.y = 1.5f;
     enemy->direction = RIGHT;
     enemy->aiState = JUMPING;
-    enemy->SetState(IDLE);
+    enemy->SetMoveState(IDLE);
     state.entities.push_back(enemy);
 }
 
@@ -195,12 +195,12 @@ void ProcessInput()
             case SDLK_RIGHT:
                 break;
             case SDLK_UP:
-                if (state.player->collidedBottom && state.player->state != ATTACK)
-                    state.player->SetState(JUMP);
+                if (state.player->collidedBottom && state.player->moveState != ATTACK)
+                    state.player->SetMoveState(JUMP);
                 break;
             case SDLK_SPACE:
-                if (state.player->collidedBottom && state.player->state != ATTACK)
-                    state.player->SetState(ATTACK);
+                if (state.player->collidedBottom && state.player->moveState != ATTACK)
+                    state.player->SetMoveState(ATTACK);
                 break;
             }
             break; // SDL_KEYDOWN
@@ -210,7 +210,7 @@ void ProcessInput()
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
     // Disable other controls during attack or jump
-    if (state.player->state == ATTACK || !(state.player->collidedBottom))
+    if (state.player->moveState == ATTACK || !(state.player->collidedBottom))
         return;
 
     if (keys[SDL_SCANCODE_LEFT])
@@ -219,7 +219,7 @@ void ProcessInput()
         {
             state.player->direction = LEFT;
         }
-        if (state.player->state != RUN) state.player->SetState(RUN);
+        if (state.player->moveState != RUN) state.player->SetMoveState(RUN);
     }
     else if (keys[SDL_SCANCODE_RIGHT])
     {
@@ -227,13 +227,13 @@ void ProcessInput()
         {
             state.player->direction = RIGHT;
         }
-        if (state.player->state != RUN) state.player->SetState(RUN);
+        if (state.player->moveState != RUN) state.player->SetMoveState(RUN);
 
     }
     else
     {
-        if (state.player->state != IDLE)
-            state.player->SetState(IDLE);
+        if (state.player->moveState != IDLE)
+            state.player->SetMoveState(IDLE);
     }
 }
 

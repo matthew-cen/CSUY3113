@@ -82,11 +82,11 @@ bool Entity::CheckCollision(std::vector<Entity*> &entities)
         if (entity_ptr->entityType == ENEMY) {
             float dist = glm::distance(position, entity_ptr->position);
             // Enemy attack range shorter than player's
-            if (dist < 0.9f && state == ATTACK && animIndex >= 2 && animIndex < 4) {
+            if (dist < 0.9f && moveState == ATTACK && animIndex >= 2 && animIndex < 4) {
                 entity_ptr->alive = false;
             }  
 
-            if (dist < 0.6f && entity_ptr->state == ATTACK) {
+            if (dist < 0.6f && entity_ptr->moveState == ATTACK) {
                 alive = false;
             }  
             // Player Attacks
@@ -122,8 +122,8 @@ void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
                 if (animIndex >= animIndices->size())
                 {
                     animIndex = 0;
-                    if (state == ATTACK)
-                        SetState(IDLE);
+                    if (moveState == ATTACK)
+                        SetMoveState(IDLE);
                 }
             }
         }
@@ -152,8 +152,8 @@ void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
     CheckCollisionsX(map);
     // CheckCollisionsX(entities); // Fix if needed
 
-    if (collidedBottom && state == JUMPING)
-        SetState(IDLE);
+    if (collidedBottom && moveState == JUMPING)
+        SetMoveState(IDLE);
 
     if (entityType == PLAYER) CheckCollision(entities);
 
@@ -209,9 +209,9 @@ void Entity::Render(ShaderProgram *program)
     }
 }
 
-void Entity::SetState(enum EntityState newState)
+void Entity::SetMoveState(enum EntityMoveState newMoveState)
 {
-    switch (newState)
+    switch (newMoveState)
     {
     case IDLE:
         velocity.x = 0.0f;
@@ -247,7 +247,7 @@ void Entity::SetState(enum EntityState newState)
     default:
         break;
     }
-    state = newState;
+    moveState = newMoveState;
 }
 
 void Entity::AI()
@@ -261,7 +261,7 @@ void Entity::AI()
         break;
     case JUMPING:
         if (collidedBottom)
-            SetState(JUMP);
+            SetMoveState(JUMP);
         break;
     default:
         break;
