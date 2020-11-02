@@ -96,18 +96,6 @@ bool Entity::CheckCollision(std::vector<Entity *> &entities)
             {
                 entity_ptr->alive = false;
             }
-
-            // if (dist < 0.6f && entity_ptr->moveState == ATTACK)
-            // {
-            //     alive = false;
-            // }
-            // Player Attacks
-            // if (state == ATTACK) {}
-
-            // Enemy Attacks player
-            // if (entity_ptr->state == ATTACK) {
-
-            // }
         }
     }
     return true;
@@ -127,7 +115,7 @@ void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
             animTime += deltaTime;
 
             // change animation frame if enough time accumulated
-            if (animTime >= 0.25f)
+            if (animTime >= 0.2f)
             {
                 animTime = 0.0f;
                 animIndex++;
@@ -167,7 +155,7 @@ void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
     position.x += velocity.x * deltaTime; // Move on X
     CheckCollisionsX(map);
 
-    if (collidedBottom && moveState == JUMPING)
+    if (collidedBottom && moveState == JUMP)
         SetMoveState(IDLE);
 
     if (entityType == PLAYER)
@@ -286,28 +274,48 @@ void Entity::AI(Entity *player)
             // stop moving if on edge
             if (!collidedLeftFallSensor || !collidedRightFallSensor)
             {
-                // move towards player
                 velocity.x = 0.0f;
             }
             else
             {
+                // move towards player
                 direction = playerDirection;
                 SetMoveState(RUN);
+                if (dist <= attackRange)
+                    aiState = ATTACKING;
             }
         }
         else if (aiType == COWARD)
         {
-            // move away from player
-            direction = (playerDirection == LEFT) ? RIGHT : LEFT;
-            SetMoveState(RUN);
+            if (dist <= attackRange)
+                aiState = ATTACKING;
+            else
+            {
+                // move away from player
+                direction = (playerDirection == LEFT) ? RIGHT : LEFT;
+                SetMoveState(RUN);
+            }
+        }
+        else if (aiType == JUMPER)
+        {
+            SetMoveState(IDLE);
+            if (dist <= attackRange)
+                aiState = ATTACKING;
         }
         break;
     case ATTACKING:
-        break;
-    case JUMPING:
-        // aiState = JUMPING;
-        if (collidedBottom)
-            SetMoveState(JUMP);
+        if (aiType == PATROLLER || aiType == JUMPER || aiType == COWARD)
+        {
+            if (dist >= attackRange)
+            {
+                aiState = ALERTED;
+                return;
+            }
+
+            SetMoveState(ATTACK);
+
+            player->alive = false;
+        }
         break;
     case PASSIVE:
         if (dist < detectionRange)
@@ -324,6 +332,10 @@ void Entity::AI(Entity *player)
                 direction = LEFT;
             }
             SetMoveState(RUN);
+        }
+        if (aiType == JUMPER) {
+                    if (collidedBottom)
+            SetMoveState(JUMP);
         }
         break;
     default:

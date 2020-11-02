@@ -128,11 +128,11 @@ void Initialize()
     enemy->animCols = 1;
     enemy->animRows = 1;
     enemy->acceleration.y = -9.81f;
-    enemy->position.x = 5.5f;
+    enemy->position.x = 6.6f;
     enemy->position.y = -0.5f;
     enemy->direction = RIGHT;
     enemy->aiType = JUMPER;
-    enemy->aiState = JUMPING;
+    enemy->aiState = PASSIVE;
     enemy->SetMoveState(IDLE);
     state.entities.push_back(enemy);
 
@@ -246,6 +246,7 @@ float accumulator = 0.0f;
 
 void Update()
 {
+    
     float ticks = (float)SDL_GetTicks() / 1000.0f;
     float deltaTime = ticks - lastTicks;
     lastTicks = ticks;
@@ -257,16 +258,25 @@ void Update()
         accumulator = deltaTime;
         return;
     }
+    unsigned int aliveEnemyCount;
     while (deltaTime >= FIXED_TIMESTEP)
     {
+        aliveEnemyCount = 0;
+        
         for (Entity *&entity_ptr : state.entities)
         {
-            if (entity_ptr->alive)
+            if (entity_ptr->alive) {
+                if (entity_ptr->entityType == ENEMY) aliveEnemyCount += 1;
                 entity_ptr->Update(FIXED_TIMESTEP, state.entities, state.map);
+            }
         }
         deltaTime -= FIXED_TIMESTEP;
     }
     accumulator = deltaTime;
+
+    if (aliveEnemyCount == 0) {
+        state.gameMode = GAME_WIN;
+    }
 
     // side scrolling
     viewMatrix = glm::mat4(1.0f);
@@ -300,10 +310,10 @@ void Render()
     state.map->Render(&program);
 
     if (state.gameMode == GAME_LOSE)
-        Util::DrawText(&program, fontTextureID, "You Lose", 1.2f, 0.05f, glm::vec3(1.0f, -0.8f, 0.0f));
+        Util::DrawText(&program, fontTextureID, "You Lose", 1.0f, -0.5f, glm::vec3(state.player->position.x, -0.8f, 0.0f));
 
     else if (state.gameMode == GAME_WIN)
-        Util::DrawText(&program, fontTextureID, "You Win", 1.2f, 0.05f, glm::vec3(1.0f, -0.8f, 0.0f));
+        Util::DrawText(&program, fontTextureID, "You Win", 1.0f, -0.5f, glm::vec3(state.player->position.x, -0.8f, 0.0f));
 
     SDL_GL_SwapWindow(displayWindow);
 }

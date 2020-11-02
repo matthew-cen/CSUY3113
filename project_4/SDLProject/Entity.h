@@ -20,14 +20,13 @@ enum EntityDirection {LEFT, RIGHT};
 enum AIState {
     PATROLLING, // patrol flat platform
     ALERTED, // enemy senses player 
-    JUMPING, 
     PASSIVE,
     ATTACKING // enemy attacks player
     };
 enum AIType {
     PATROLLER, // patrols platforn, aggressive
-    JUMPER, // jumps in place, passive 
-    COWARD // runs from player, passive
+    JUMPER, // jumps in place, attacks only when player close
+    COWARD // runs from player, attacks only when player close
     };
 
 
