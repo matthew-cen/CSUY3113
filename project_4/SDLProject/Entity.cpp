@@ -78,6 +78,8 @@ void Entity::CheckCollisionsX(Map *map)
 void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
 {
 
+    if (entityType == ENEMY) AI();
+    
     if (animIndices != NULL)
     {
         if (glm::length(acceleration) != 0)
@@ -121,6 +123,8 @@ void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
     position.x += velocity.x * deltaTime; // Move on X
     CheckCollisionsX(map);
     // CheckCollisionsX(entities); // Fix if needed
+
+    if (collidedBottom && state == JUMPING) SetState(IDLE);
 
     modelMatrix = glm::mat4(1.0f);
     modelMatrix = glm::translate(modelMatrix, position);
@@ -228,6 +232,7 @@ void Entity::AI()
     case ATTACKING:
         break;
     case JUMPING:
+        if (collidedBottom) SetState(JUMP);
         break;
     default:
         break;

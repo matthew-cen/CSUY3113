@@ -130,6 +130,7 @@ void Initialize()
     enemy->position.x = 5.5f;
     enemy->position.y = -0.5f;
     enemy->direction = RIGHT;
+    enemy->aiState = JUMPING;
     enemy->SetState(IDLE);
 
     state.entities.push_back(enemy);
@@ -171,12 +172,8 @@ void ProcessInput()
 
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
-    // Disable other controls during attack
-    if (state.player->state == ATTACK)
-        return;
-    // Disable controls if player is in air
-    // if (state.player->state == JUMP && !(state.player->collidedBottom)) return;
-    if (!(state.player->collidedBottom))
+    // Disable other controls during attack or jump
+    if (state.player->state == ATTACK || !(state.player->collidedBottom))
         return;
 
     if (keys[SDL_SCANCODE_LEFT])
@@ -189,7 +186,7 @@ void ProcessInput()
         state.player->direction = RIGHT;
         state.player->SetState(RUN);
     }
-    else
+    else 
     {
         state.player->SetState(IDLE);
     }
