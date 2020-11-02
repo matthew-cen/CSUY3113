@@ -287,13 +287,19 @@ void Entity::AI(Entity *player)
         }
         else if (aiType == COWARD)
         {
-            if (dist <= attackRange)
-                aiState = ATTACKING;
-            else
+
+            // stop moving if on edge
+            if (!collidedLeftFallSensor || !collidedRightFallSensor)
             {
+                // velocity.x = 0.0f;
+                SetMoveState(IDLE);
+            }
+            else {
                 // move away from player
                 direction = (playerDirection == LEFT) ? RIGHT : LEFT;
                 SetMoveState(RUN);
+                if (dist <= attackRange)
+                    aiState = ATTACKING;
             }
         }
         else if (aiType == JUMPER)
@@ -333,9 +339,15 @@ void Entity::AI(Entity *player)
             }
             SetMoveState(RUN);
         }
-        if (aiType == JUMPER) {
-                    if (collidedBottom)
-            SetMoveState(JUMP);
+        if (aiType == JUMPER)
+        {
+            if (collidedBottom)
+                SetMoveState(JUMP);
+        }
+        if (aiType == COWARD)
+        {
+            if (collidedBottom)
+                SetMoveState(IDLE);
         }
         break;
     default:

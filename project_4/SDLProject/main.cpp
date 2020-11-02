@@ -19,7 +19,7 @@
 #define GL_GLEXT_PROTOTYPES 1
 #define FIXED_TIMESTEP 0.016666f
 
-#define LEVEL1_WIDTH 16
+#define LEVEL1_WIDTH 22
 #define LEVEL1_HEIGHT 8
 
 enum GameMode
@@ -41,14 +41,14 @@ GameState state;
 
 unsigned int level1_data[] =
     {
-        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 5,
-        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 5,
-        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 5,
-        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 0, 1, 1, 1, 5,
-        5, 15, 15, 15, 15, 15, 15, 15, 0, 1, 1, 5, 5, 5, 5, 5,
-        5, 15, 15, 15, 15, 0, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5,
-        5, 1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-        5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5};
+        05, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 05,
+        05, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 05,
+        05, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 05,
+        05, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 05,
+        05, 15, 15, 15, 15, 15, 15, 15, 00, 01, 01, 01, 01, 15, 15, 15, 15, 15, 15, 15, 15, 05,
+        05, 15, 15, 15, 15, 00, 01, 01, 05, 05, 05, 05, 05, 15, 01, 01, 01, 01, 01, 15, 15, 05,
+        05, 01, 01, 01, 01, 05, 05, 05, 05, 05, 05, 05, 05, 15, 15, 15, 15, 15, 15, 15, 15, 05,
+        05, 05, 05, 05, 05, 05, 05, 05, 05, 05, 05, 05, 05, 15, 15, 15, 15, 15, 15, 15, 15, 05};
 
 SDL_Window *displayWindow;
 bool gameIsRunning = true;
@@ -168,8 +168,8 @@ void Initialize()
     enemy->animCols = 1;
     enemy->animRows = 1;
     enemy->acceleration.y = -9.81f;
-    enemy->position.x = 12.2f;
-    enemy->position.y = 1.5f;
+    enemy->position.x = 15.2f;
+    enemy->position.y = 2.5f;
     enemy->direction = RIGHT;
     enemy->aiType = COWARD;
     enemy->aiState = PASSIVE;
@@ -223,7 +223,8 @@ void ProcessInput()
         {
             state.player->direction = LEFT;
         }
-        if (state.player->moveState != RUN) state.player->SetMoveState(RUN);
+        if (state.player->moveState != RUN)
+            state.player->SetMoveState(RUN);
     }
     else if (keys[SDL_SCANCODE_RIGHT])
     {
@@ -231,8 +232,8 @@ void ProcessInput()
         {
             state.player->direction = RIGHT;
         }
-        if (state.player->moveState != RUN) state.player->SetMoveState(RUN);
-
+        if (state.player->moveState != RUN)
+            state.player->SetMoveState(RUN);
     }
     else
     {
@@ -246,7 +247,7 @@ float accumulator = 0.0f;
 
 void Update()
 {
-    
+
     float ticks = (float)SDL_GetTicks() / 1000.0f;
     float deltaTime = ticks - lastTicks;
     lastTicks = ticks;
@@ -262,11 +263,13 @@ void Update()
     while (deltaTime >= FIXED_TIMESTEP)
     {
         aliveEnemyCount = 0;
-        
+
         for (Entity *&entity_ptr : state.entities)
         {
-            if (entity_ptr->alive) {
-                if (entity_ptr->entityType == ENEMY) aliveEnemyCount += 1;
+            if (entity_ptr->alive)
+            {
+                if (entity_ptr->entityType == ENEMY)
+                    aliveEnemyCount += 1;
                 entity_ptr->Update(FIXED_TIMESTEP, state.entities, state.map);
             }
         }
@@ -274,7 +277,8 @@ void Update()
     }
     accumulator = deltaTime;
 
-    if (aliveEnemyCount == 0) {
+    if (aliveEnemyCount == 0)
+    {
         state.gameMode = GAME_WIN;
     }
 
