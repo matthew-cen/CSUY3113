@@ -17,7 +17,13 @@
 enum EntityType {PLAYER, PLATFORM, ENEMY};
 enum EntityMoveState {RUN, JUMP, IDLE, ATTACK};
 enum EntityDirection {LEFT, RIGHT};
-enum AIState {PATROLLING, JUMPING, ATTACKING};
+enum AIState {
+    PATROLLING, // patrol flat platform
+    ALERTED, // enemy senses player 
+    JUMPING, 
+    PASSIVE,
+    ATTACKING // enemy attacks player
+    };
 enum AIType {
     PATROLLER, // patrols platforn, aggressive
     JUMPER, // jumps in place, passive 
@@ -31,18 +37,23 @@ public:
     EntityMoveState moveState;
     EntityDirection direction;
     AIState aiState;
+    AIType aiType;
+
     bool active = true;
     bool alive = true;
     bool jump = false;
 
     float jumpPower = 5.0f;
+    float attackRange = 0.6f;
+    float detectionRange = 1.5f;
+
     glm::vec3 position = glm::vec3(0);
     glm::vec3 velocity = glm::vec3(0);
     glm::vec3 acceleration = glm::vec3(0);
     GLuint textureID;
     
     glm::mat4 modelMatrix = glm::mat4(1.0f);
-    
+    // TODO: Create class/map for animations
     std::vector<int> *animMoveRight = NULL;
     std::vector<int> *animMoveLeft = NULL;
     std::vector<int> *animMoveUp = NULL;
@@ -54,7 +65,7 @@ public:
 
     std::vector<int> *animIndices = NULL;
 
-    float moveSpeed = 2.0f;
+    float moveSpeed = 1.0f;
     unsigned int animIndex = 0;
     float animTime = 0;
     int animCols = 0;
@@ -69,6 +80,9 @@ public:
     bool collidedBottom;
     bool collidedLeft;
     bool collidedRight;
+    bool collidedRightFallSensor; 
+    bool collidedLeftFallSensor; 
+
 
 
     EntityType lastCollision;
@@ -84,5 +98,5 @@ public:
     void SetMoveState(enum EntityMoveState newState);
     void DrawSpriteFromTextureAtlas(ShaderProgram *program, GLuint textureID, int index);
 
-    void AI();
+    void AI(Entity *player);
 };

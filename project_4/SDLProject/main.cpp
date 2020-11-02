@@ -102,7 +102,6 @@ void Initialize()
     state.player->animMoveRight = new std::vector<int>{7, 8, 9, 10, 11, 12};
     state.player->animAttackLeft = new std::vector<int>{31, 32, 33, 34, 35};
     state.player->animAttackRight = new std::vector<int>{13, 14, 15, 16, 17};
-
     state.player->animIndex = 0;
     state.player->animCols = 18;
     state.player->animRows = 2;
@@ -110,6 +109,8 @@ void Initialize()
     state.player->position.x = 1.0f;
     state.player->position.y = -1.0f;
     state.player->direction = RIGHT;
+    state.player->attackRange = 0.9f;
+    state.player->moveSpeed = 2.0f;
     state.player->SetMoveState(IDLE);
 
     state.entities.push_back(state.player);
@@ -130,6 +131,7 @@ void Initialize()
     enemy->position.x = 5.5f;
     enemy->position.y = -0.5f;
     enemy->direction = RIGHT;
+    enemy->aiType = JUMPER;
     enemy->aiState = JUMPING;
     enemy->SetMoveState(IDLE);
     state.entities.push_back(enemy);
@@ -146,10 +148,11 @@ void Initialize()
     enemy->animCols = 1;
     enemy->animRows = 1;
     enemy->acceleration.y = -9.81f;
-    enemy->position.x = 8.5f;
+    enemy->position.x = 9.7f;
     enemy->position.y = 0.5f;
     enemy->direction = RIGHT;
-    enemy->aiState = JUMPING;
+    enemy->aiType = PATROLLER;
+    enemy->aiState = PASSIVE;
     enemy->SetMoveState(IDLE);
     state.entities.push_back(enemy);
 
@@ -165,10 +168,11 @@ void Initialize()
     enemy->animCols = 1;
     enemy->animRows = 1;
     enemy->acceleration.y = -9.81f;
-    enemy->position.x = 11.5f;
+    enemy->position.x = 12.2f;
     enemy->position.y = 1.5f;
     enemy->direction = RIGHT;
-    enemy->aiState = JUMPING;
+    enemy->aiType = COWARD;
+    enemy->aiState = PASSIVE;
     enemy->SetMoveState(IDLE);
     state.entities.push_back(enemy);
 }

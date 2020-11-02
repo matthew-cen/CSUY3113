@@ -52,6 +52,15 @@ void Entity::CheckCollisionsY(Map *map)
         velocity.y = 0;
         collidedBottom = true;
     }
+
+    if (map->IsSolid(bottom_left, &penetration_x, &penetration_y))
+    {
+        collidedLeftFallSensor = true;
+    }
+    if (map->IsSolid(bottom_right, &penetration_x, &penetration_y))
+    {
+        collidedRightFallSensor = true;
+    }
 }
 
 void Entity::CheckCollisionsX(Map *map)
@@ -75,20 +84,23 @@ void Entity::CheckCollisionsX(Map *map)
     }
 }
 
-bool Entity::CheckCollision(std::vector<Entity*> &entities)
+bool Entity::CheckCollision(std::vector<Entity *> &entities)
 {
     for (Entity *&entity_ptr : entities)
     {
-        if (entity_ptr->entityType == ENEMY) {
+        if (entity_ptr->entityType == ENEMY)
+        {
             float dist = glm::distance(position, entity_ptr->position);
             // Enemy attack range shorter than player's
-            if (dist < 0.9f && moveState == ATTACK && animIndex >= 2 && animIndex < 4) {
+            if (dist < attackRange && moveState == ATTACK && animIndex >= 2 && animIndex < 4)
+            {
                 entity_ptr->alive = false;
-            }  
+            }
 
-            if (dist < 0.6f && entity_ptr->moveState == ATTACK) {
-                alive = false;
-            }  
+            // if (dist < 0.6f && entity_ptr->moveState == ATTACK)
+            // {
+            //     alive = false;
+            // }
             // Player Attacks
             // if (state == ATTACK) {}
 
@@ -105,7 +117,7 @@ void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
 {
 
     if (entityType == ENEMY)
-        AI();
+        AI(entities[0]);
 
     if (animIndices != NULL)
     {
@@ -144,18 +156,22 @@ void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
     collidedBottom = false;
     collidedLeft = false;
     collidedRight = false;
+    collidedRightFallSensor = false;
+    collidedLeftFallSensor = false;
+
+    //
+
     velocity += acceleration * deltaTime;
     position.y += velocity.y * deltaTime; // Move on Y
     CheckCollisionsY(map);
-    // CheckCollisionsY(entities); // Fix if needed
     position.x += velocity.x * deltaTime; // Move on X
     CheckCollisionsX(map);
-    // CheckCollisionsX(entities); // Fix if needed
 
     if (collidedBottom && moveState == JUMPING)
         SetMoveState(IDLE);
 
-    if (entityType == PLAYER) CheckCollision(entities);
+    if (entityType == PLAYER)
+        CheckCollision(entities);
 
     modelMatrix = glm::mat4(1.0f);
     modelMatrix = glm::translate(modelMatrix, position);
@@ -250,18 +266,65 @@ void Entity::SetMoveState(enum EntityMoveState newMoveState)
     moveState = newMoveState;
 }
 
-void Entity::AI()
+void Entity::AI(Entity *player)
 {
+    float dist = glm::distance(position, player->position);
+
+    // Get direction of player
+    EntityDirection playerDirection = (player->position.x < position.x) ? LEFT : RIGHT;
     switch (aiState)
     {
-    case PATROLLING:
-        /* code */
+    case ALERTED:
+        if (dist >= detectionRange)
+        {
+            aiState = PASSIVE;
+            return;
+        }
+
+        if (aiType == PATROLLER)
+        {
+            // stop moving if on edge
+            if (!collidedLeftFallSensor || !collidedRightFallSensor)
+            {
+                // move towards player
+                velocity.x = 0.0f;
+            }
+            else
+            {
+                direction = playerDirection;
+                SetMoveState(RUN);
+            }
+        }
+        else if (aiType == COWARD)
+        {
+            // move away from player
+            direction = (playerDirection == LEFT) ? RIGHT : LEFT;
+            SetMoveState(RUN);
+        }
         break;
     case ATTACKING:
         break;
     case JUMPING:
+        // aiState = JUMPING;
         if (collidedBottom)
             SetMoveState(JUMP);
+        break;
+    case PASSIVE:
+        if (dist < detectionRange)
+            aiState = ALERTED;
+        if (aiType == PATROLLER)
+        {
+            // Patrol platform
+            if (!collidedLeftFallSensor || collidedLeft)
+            {
+                direction = RIGHT;
+            }
+            if (!collidedRightFallSensor || collidedRight)
+            {
+                direction = LEFT;
+            }
+            SetMoveState(RUN);
+        }
         break;
     default:
         break;
