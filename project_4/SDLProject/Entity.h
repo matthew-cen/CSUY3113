@@ -17,6 +17,8 @@
 enum EntityType {PLAYER, PLATFORM, ENEMY};
 enum EntityState {RUN, JUMP, IDLE, ATTACK};
 enum EntityDirection {LEFT, RIGHT};
+enum AIState {PATROLLING, JUMPING, ATTACKING};
+
 
 
 class Entity {
@@ -24,7 +26,7 @@ public:
     EntityType entityType;
     EntityState state;
     EntityDirection direction;
-
+    AIState aiState;
     bool active = true;
     bool needUpdate = true;
     bool jump = false;
@@ -77,4 +79,6 @@ public:
     void CheckCollisionsY(Map *map);
     void SetState(enum EntityState newState);
     void DrawSpriteFromTextureAtlas(ShaderProgram *program, GLuint textureID, int index);
+
+    void AI();
 };

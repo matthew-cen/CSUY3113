@@ -217,3 +217,19 @@ void Entity::SetState(enum EntityState newState)
     }
     state = newState;
 }
+
+void Entity::AI()
+{
+    switch (aiState)
+    {
+    case PATROLLING:
+        /* code */
+        break;
+    case ATTACKING:
+        break;
+    case JUMPING:
+        break;
+    default:
+        break;
+    }
+}

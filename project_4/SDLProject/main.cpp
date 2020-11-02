@@ -19,7 +19,7 @@
 #define GL_GLEXT_PROTOTYPES 1
 #define FIXED_TIMESTEP 0.016666f
 
-#define LEVEL1_WIDTH 14
+#define LEVEL1_WIDTH 16
 #define LEVEL1_HEIGHT 8
 
 enum GameMode
@@ -41,14 +41,14 @@ GameState state;
 
 unsigned int level1_data[] =
     {
-        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 5,
-        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 5,
-        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 5,
-        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 0, 1, 5,
-        5, 15, 15, 15, 15, 15, 15, 15, 0, 1, 1, 5, 5, 5,
-        5, 15, 15, 15, 15, 0, 1, 1, 5, 5, 5, 5, 5, 5,
-        5, 1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-        5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5};
+        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 5,
+        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 5,
+        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 5,
+        5, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,  0,  1,  1,  1, 5, 
+        5, 15, 15, 15, 15, 15, 15, 15,  0,  1,  1,  5,  5,  5,  5, 5, 
+        5, 15, 15, 15, 15,  0,  1,  1,  5,  5,  5,  5,  5,  5,  5, 5,
+        5,  1,  1,  1,  1,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5, 5,
+        5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5, 5};
 
 SDL_Window *displayWindow;
 bool gameIsRunning = true;
@@ -127,13 +127,12 @@ void Initialize()
     enemy->animCols = 1;
     enemy->animRows = 1;
     enemy->acceleration.y = -9.81f;
-    enemy->position.x = 1.0f;
-    enemy->position.y = -1.0f;
+    enemy->position.x = 5.5f;
+    enemy->position.y = -0.5f;
     enemy->direction = RIGHT;
     enemy->SetState(IDLE);
 
     state.entities.push_back(enemy);
-
 }
 
 void ProcessInput()
@@ -177,8 +176,9 @@ void ProcessInput()
         return;
     // Disable controls if player is in air
     // if (state.player->state == JUMP && !(state.player->collidedBottom)) return;
-    if (!(state.player->collidedBottom)) return;
-    
+    if (!(state.player->collidedBottom))
+        return;
+
     if (keys[SDL_SCANCODE_LEFT])
     {
         state.player->direction = LEFT;
