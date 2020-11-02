@@ -82,7 +82,7 @@ bool Entity::CheckCollision(std::vector<Entity*> &entities)
         if (entity_ptr->entityType == ENEMY) {
             float dist = glm::distance(position, entity_ptr->position);
             // Enemy attack range shorter than player's
-            if (dist < 0.9f && state == ATTACK && animIndex > 2) {
+            if (dist < 0.9f && state == ATTACK && animIndex >= 2 && animIndex < 4) {
                 entity_ptr->alive = false;
             }  
 
@@ -211,9 +211,6 @@ void Entity::Render(ShaderProgram *program)
 
 void Entity::SetState(enum EntityState newState)
 {
-    if (state == newState)
-        return;
-
     switch (newState)
     {
     case IDLE:

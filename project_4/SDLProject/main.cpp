@@ -199,7 +199,7 @@ void ProcessInput()
                     state.player->SetState(JUMP);
                 break;
             case SDLK_SPACE:
-                if (state.player->collidedBottom)
+                if (state.player->collidedBottom && state.player->state != ATTACK)
                     state.player->SetState(ATTACK);
                 break;
             }
@@ -215,17 +215,25 @@ void ProcessInput()
 
     if (keys[SDL_SCANCODE_LEFT])
     {
-        state.player->direction = LEFT;
-        state.player->SetState(RUN);
+        if (state.player->direction != LEFT)
+        {
+            state.player->direction = LEFT;
+        }
+        if (state.player->state != RUN) state.player->SetState(RUN);
     }
     else if (keys[SDL_SCANCODE_RIGHT])
     {
-        state.player->direction = RIGHT;
-        state.player->SetState(RUN);
+        if (state.player->direction != RIGHT)
+        {
+            state.player->direction = RIGHT;
+        }
+        if (state.player->state != RUN) state.player->SetState(RUN);
+
     }
     else
     {
-        state.player->SetState(IDLE);
+        if (state.player->state != IDLE)
+            state.player->SetState(IDLE);
     }
 }
 
