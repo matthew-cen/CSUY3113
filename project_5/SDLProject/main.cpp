@@ -12,6 +12,9 @@
 #include "Entity.h"
 #include "Map.h"
 #include "Util.h"
+#include "Scene.h"
+#include "Level1.h"
+
 
 #include <vector>
 
@@ -22,34 +25,15 @@
 #define LEVEL1_WIDTH 22
 #define LEVEL1_HEIGHT 8
 
-enum GameMode
-{
-    GAME_PLAY,
-    GAME_LOSE,
-    GAME_WIN
-};
 
-struct GameState
-{
-    std::vector<Entity *> entities;
-    Entity *player;
-    GameMode gameMode = GAME_PLAY;
-    Map *map;
-    unsigned int lives = 3;
-};
 
-GameState state;
+Scene* currentScene;
+Level1* level1;
 
-unsigned int level1_data[] =
-    {
-        05, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 05,
-        05, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 05,
-        05, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 05,
-        05, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 05,
-        05, 15, 15, 15, 15, 15, 15, 15, 00, 01, 01, 01, 01, 15, 15, 15, 15, 15, 15, 15, 15, 05,
-        05, 15, 15, 15, 15, 00, 01, 01, 05, 05, 05, 05, 05, 15, 01, 01, 01, 01, 01, 15, 15, 05,
-        05, 01, 01, 01, 01, 05, 05, 05, 05, 05, 05, 05, 05, 15, 15, 15, 15, 15, 15, 15, 15, 05,
-        05, 05, 05, 05, 05, 05, 05, 05, 05, 05, 05, 05, 05, 15, 15, 15, 15, 15, 15, 15, 15, 05};
+void SwitchToScene(Scene* scene) {
+    currentScene = scene;
+    currentScene->Initialize();
+}
 
 SDL_Window *displayWindow;
 bool gameIsRunning = true;
@@ -58,48 +42,7 @@ GLuint fontTextureID;
 ShaderProgram program;
 glm::mat4 viewMatrix, modelMatrix, projectionMatrix;
 
-Entity * createPlayer(const GLuint const textureID, float const pos_x, float const pos_y) {
-    Entity * entity = new Entity(PLAYER, textureID);
-    entity->animIdleLeft = new std::vector<int>{ 18, 19, 20 };
-    entity->animIdleRight = new std::vector<int>{ 0, 1, 2 };
-    entity->animMoveLeft = new std::vector<int>{ 25, 26, 27, 28, 29, 30 };
-    entity->animMoveRight = new std::vector<int>{ 7, 8, 9, 10, 11, 12 };
-    entity->animAttackLeft = new std::vector<int>{ 31, 32, 33, 34, 35 };
-    entity->animAttackRight = new std::vector<int>{ 13, 14, 15, 16, 17 };
-    entity->animIndex = 0;
-    entity->animCols = 18;
-    entity->animRows = 2;
-    entity->acceleration.y = -9.81f;
-    entity->position.x = pos_x;
-    entity->position.y = pos_y;
-    entity->direction = RIGHT;
-    entity->attackRange = 0.9f;
-    entity->moveSpeed = 2.0f;
-    entity->SetMoveState(IDLE);
-    entity->width = 0.5f; // reduce collision box size
-    return entity;
-}
-Entity* createHound(const GLuint const textureID, float const pos_x, float const pos_y, enum AIType type) {
-    Entity* entity = new Entity(ENEMY, textureID);
-    entity->animIdleLeft = new std::vector<int>{ 0,1,2,3,4,5 };
-    entity->animIdleRight = new std::vector<int>{ 0,1,2,3,4,5 };
-    entity->animMoveLeft = new std::vector<int>{ 0,1,2,3,4,5 };
-    entity->animMoveRight = new std::vector<int>{ 0,1,2,3,4,5 };
-    entity->animAttackLeft = new std::vector<int>{ 0,1,2,3,4,5 };
-    entity->animAttackRight = new std::vector<int>{ 0,1,2,3,4,5 };
-    entity->animIndices = entity->animIdleRight;
-    entity->animIndex = 0;
-    entity->animCols = 6;
-    entity->animRows = 1;
-    entity->acceleration.y = -9.81f;
-    entity->position.x = pos_x;
-    entity->position.y = pos_y;
-    entity->direction = LEFT;
-    entity->aiType = type;
-    entity->aiState = PASSIVE;
-    entity->SetMoveState(IDLE);
-    return entity;
-}
+
 
 void Initialize()
 {
@@ -132,23 +75,8 @@ void Initialize()
 
     // Font
     fontTextureID = Util::LoadTexture("assets/font1.png");
-
-    // Load Map
-    GLuint mapTilesTextureID = Util::LoadTexture("assets/Tileset.png"); // 6x8 Tile Set
-    state.map = new Map(LEVEL1_WIDTH, LEVEL1_HEIGHT, level1_data, mapTilesTextureID, 1.0f, 8, 6);
-
-    // Load Sprites
-    GLuint playerTextureID = Util::LoadTexture("assets/adventurer.png"); // 6x8 Tile Set
-    state.player = createPlayer(playerTextureID, 1.0f, -1.0f);
-    state.entities.push_back(state.player);
-
-    const GLuint houndTextureID = Util::LoadTexture("assets/enemies/hell-hound-idle.png"); // 6x8 Tile Set
-    Entity *enemy = createHound(houndTextureID, 6.6f, -0.5f, JUMPER);
-    state.entities.push_back(enemy);
-    enemy = createHound(houndTextureID, 9.7f, 0.5f, PATROLLER);
-    state.entities.push_back(enemy);
-    enemy = createHound(houndTextureID, 15.2f, 2.5f, COWARD);
-    state.entities.push_back(enemy);
+    level1 = new Level1();
+    SwitchToScene(level1);
 }
 
 void ProcessInput()
@@ -173,12 +101,12 @@ void ProcessInput()
             case SDLK_RIGHT:
                 break;
             case SDLK_UP:
-                if (state.player->collidedBottom && state.player->moveState != ATTACK)
-                    state.player->SetMoveState(JUMP);
+                if (currentScene->state.player->collidedBottom && currentScene->state.player->moveState != ATTACK)
+                    currentScene->state.player->SetMoveState(JUMP);
                 break;
             case SDLK_SPACE:
-                if (state.player->collidedBottom && state.player->moveState != ATTACK)
-                    state.player->SetMoveState(ATTACK);
+                if (currentScene->state.player->collidedBottom && currentScene->state.player->moveState != ATTACK)
+                    currentScene->state.player->SetMoveState(ATTACK);
                 break;
             }
             break; // SDL_KEYDOWN
@@ -188,31 +116,31 @@ void ProcessInput()
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
     // Disable other controls during attack or jump
-    if (state.player->moveState == ATTACK || !(state.player->collidedBottom))
+    if (currentScene->state.player->moveState == ATTACK || !(currentScene->state.player->collidedBottom))
         return;
 
     if (keys[SDL_SCANCODE_LEFT])
     {
-        if (state.player->direction != LEFT)
+        if (currentScene->state.player->direction != LEFT)
         {
-            state.player->direction = LEFT;
+            currentScene->state.player->direction = LEFT;
         }
-        if (state.player->moveState != RUN)
-            state.player->SetMoveState(RUN);
+        if (currentScene->state.player->moveState != RUN)
+            currentScene->state.player->SetMoveState(RUN);
     }
     else if (keys[SDL_SCANCODE_RIGHT])
     {
-        if (state.player->direction != RIGHT)
+        if (currentScene->state.player->direction != RIGHT)
         {
-            state.player->direction = RIGHT;
+            currentScene->state.player->direction = RIGHT;
         }
-        if (state.player->moveState != RUN)
-            state.player->SetMoveState(RUN);
+        if (currentScene->state.player->moveState != RUN)
+            currentScene->state.player->SetMoveState(RUN);
     }
     else
     {
-        if (state.player->moveState != IDLE)
-            state.player->SetMoveState(IDLE);
+        if (currentScene->state.player->moveState != IDLE)
+            currentScene->state.player->SetMoveState(IDLE);
     }
 }
 
@@ -233,36 +161,22 @@ void Update()
         accumulator = deltaTime;
         return;
     }
-    unsigned int aliveEnemyCount;
     while (deltaTime >= FIXED_TIMESTEP)
     {
-        aliveEnemyCount = 0;
-
-        for (Entity *&entity_ptr : state.entities)
-        {
-            if (entity_ptr->alive)
-            {
-                if (entity_ptr->entityType == ENEMY)
-                    aliveEnemyCount += 1;
-                entity_ptr->Update(FIXED_TIMESTEP, state.entities, state.map);
-            }
-        }
+        currentScene->Update(FIXED_TIMESTEP);
         deltaTime -= FIXED_TIMESTEP;
     }
     accumulator = deltaTime;
 
-    if (aliveEnemyCount == 0)
-    {
-        state.gameMode = GAME_WIN;
-    }
+
 
     // side scrolling
     viewMatrix = glm::mat4(1.0f);
 
-    if (state.player->position.x > 5)
+    if (currentScene->state.player->position.x > 5)
     {
         viewMatrix = glm::translate(viewMatrix,
-                                    glm::vec3(-state.player->position.x, 3.75, 0));
+                                    glm::vec3(-(currentScene->state.player->position.x), 3.75, 0));
     }
     else
     {
@@ -270,9 +184,9 @@ void Update()
     }
 
     // End game when player dies
-    if (!(state.player->alive))
+    if (!(currentScene->state.player->alive))
     {   
-        if (--state.lives == 0) state.gameMode = GAME_LOSE;
+        if (--(currentScene->state.lives) == 0) currentScene->state.gameMode = GAME_LOSE;
     }
 }
 
@@ -280,18 +194,12 @@ void Render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
     program.SetViewMatrix(viewMatrix);
-    for (Entity *&entity : state.entities)
-    {
-        if (entity->alive)
-            entity->Render(&program);
-    }
-    state.map->Render(&program);
+    currentScene->Render(&program);
+    if (currentScene->state.gameMode == GAME_LOSE)
+        Util::DrawText(&program, fontTextureID, "You Lose", 1.0f, -0.5f, glm::vec3(currentScene->state.player->position.x, -0.8f, 0.0f));
 
-    if (state.gameMode == GAME_LOSE)
-        Util::DrawText(&program, fontTextureID, "You Lose", 1.0f, -0.5f, glm::vec3(state.player->position.x, -0.8f, 0.0f));
-
-    else if (state.gameMode == GAME_WIN)
-        Util::DrawText(&program, fontTextureID, "You Win", 1.0f, -0.5f, glm::vec3(state.player->position.x, -0.8f, 0.0f));
+    else if (currentScene->state.gameMode == GAME_WIN)
+        Util::DrawText(&program, fontTextureID, "You Win", 1.0f, -0.5f, glm::vec3(currentScene->state.player->position.x, -0.8f, 0.0f));
 
     SDL_GL_SwapWindow(displayWindow);
 }
@@ -308,7 +216,7 @@ int main(int argc, char *argv[])
     while (gameIsRunning)
     {
         ProcessInput();
-        if (state.gameMode == GAME_PLAY)
+        if (currentScene->state.gameMode == GAME_PLAY)
             Update();
         Render();
     }
