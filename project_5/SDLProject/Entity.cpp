@@ -161,6 +161,9 @@ void Entity::Update(float deltaTime, std::vector<Entity *> &entities, Map *map)
     if (entityType == PLAYER)
         CheckCollision(entities);
 
+    // Kill Entity if falls off map
+    if (position.y < -10.0f) alive = false;
+
     modelMatrix = glm::mat4(1.0f);
     modelMatrix = glm::translate(modelMatrix, position);
 }
@@ -257,6 +260,7 @@ void Entity::SetMoveState(enum EntityMoveState newMoveState)
 void Entity::AI(Entity *player)
 {
     float dist = glm::distance(position, player->position);
+    bool directionChanged = false;
 
     // Get direction of player
     EntityDirection playerDirection = (player->position.x < position.x) ? LEFT : RIGHT;
@@ -279,8 +283,11 @@ void Entity::AI(Entity *player)
             else
             {
                 // move towards player
-                direction = playerDirection;
-                if (collidedBottom && moveState != RUN)
+                if (direction != playerDirection) {
+                    direction = playerDirection;
+                    directionChanged = true;
+                }
+                if (collidedBottom && (directionChanged || moveState != RUN))
                     SetMoveState(RUN);
                 if (dist <= attackRange)
                     aiState = ATTACKING;
@@ -336,12 +343,14 @@ void Entity::AI(Entity *player)
             if (!collidedLeftFallSensor || collidedLeft)
             {
                 direction = RIGHT;
+                directionChanged = true;
             }
             if (!collidedRightFallSensor || collidedRight)
             {
                 direction = LEFT;
+                directionChanged = true;
             }
-            if (collidedBottom) 
+            if (collidedBottom && (directionChanged || moveState != RUN))
                 SetMoveState(RUN);
         }
         if (aiType == JUMPER)
